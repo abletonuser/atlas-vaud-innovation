@@ -4,6 +4,15 @@ on:
   schedule:
     - cron: "17 3 4 * *"        # le 4 de chaque mois à 03:17 UTC, après la publication mensuelle de CORDIS
   workflow_dispatch:
+    inputs:
+      ordre:
+        description: "Ordre de lecture des nouveaux projets Innosuisse"
+        type: choice
+        options: [recents, anciens]
+        default: recents
+      max:
+        description: "Nombre maximal de projets Innosuisse à lire"
+        default: "3000"
 
 permissions:
   contents: write
@@ -39,7 +48,7 @@ jobs:
 
       - name: Participants Innosuisse des nouveaux projets
         # au plus 3000 projets par passage ; le reste est repris le mois suivant
-        run: python scripts/aramis_participants.py --pause 0.6 --max 3000
+        run: python scripts/aramis_participants.py --pause 0.6 --max "${{ github.event.inputs.max || '3000' }}" ${{ github.event.inputs.ordre == 'anciens' && '--anciens-d-abord' || '' }}
         continue-on-error: true
 
       - name: Sièges des entreprises (numéros IDE, Zefix sur LINDAS)

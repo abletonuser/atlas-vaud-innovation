@@ -207,6 +207,7 @@ def main():
     ap.add_argument("--depuis", type=int, default=2018); ap.add_argument("--pause", type=float, default=0.6)
     ap.add_argument("--max", type=int, default=0); ap.add_argument("--test", action="store_true")
     ap.add_argument("--state", default="data/state/innosuisse_participants.csv")
+    ap.add_argument("--anciens-d-abord", action="store_true", help="lit les projets les plus anciens en premier (collecte en parallèle d'un poste qui lit les plus récents)")
     a = ap.parse_args()
     done = set()
     if os.path.exists(a.state) and not a.test:
@@ -214,6 +215,8 @@ def main():
             done = {r["AramisId"] for r in csv.DictReader(f)}
     print(f"Projets déjà collectés : {len(done)}")
     projects = [p for p in list_projects(a.depuis, a.pause, a.test) if p["Id"] not in done]
+    if a.anciens_d_abord:
+        projects.reverse()
     if a.test:
         projects = projects[:3]
     elif a.max:
