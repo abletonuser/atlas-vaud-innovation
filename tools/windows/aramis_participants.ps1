@@ -4,7 +4,10 @@
 
   Utilisation, dans le dossier du fichier :
     powershell -ExecutionPolicy Bypass -File .\aramis_participants.ps1 -Test     (verification, environ une minute)
-    powershell -ExecutionPolicy Bypass -File .\aramis_participants.ps1           (collecte complete, environ 2 a 3 heures)
+    powershell -ExecutionPolicy Bypass -File .\aramis_participants.ps1           (collecte complete)
+  powershell -ExecutionPolicy Bypass -File .\aramis_participants.ps1 -Inverse  (2e fenetre, meme dossier : lit la liste
+                                                                              par la fin ; les deux se partagent le cache
+                                                                              et se rejoignent au milieu, duree divisee par 2)
 
   Etape 1 : liste des projets, lue sur les pages publiques https://datenausgabe.aramis.admin.ch/projects
   Etape 2 : participants de chaque projet, par le service web ARAMIS ou, a defaut, la page publique "Beteiligte".
@@ -14,8 +17,9 @@
 #>
 param(
   [switch]$Test,
+  [switch]$Inverse,
   [int]$Depuis = 2018,
-  [double]$Pause = 0.6,
+  [double]$Pause = 0.3,
   [int]$Max = 0,
   [string]$ListUrl = "https://datenausgabe.aramis.admin.ch/projects",
   [string]$PageUrl = "https://www.aramis.admin.ch/Beteiligte/?ProjectID={0}&Sprache=de-CH",
@@ -103,6 +107,8 @@ while ($true) {
 if (-not $Test -and $Max -eq 0) { $projects | Select-Object Id, ProjectNumber, Year | Export-Csv -Path $listCache -NoTypeInformation -Encoding UTF8 }
 }
 if ($Test) { $projects = @($projects | Select-Object -First 3) } elseif ($Max -gt 0) { $projects = @($projects | Select-Object -First $Max) }
+$projects = @($projects)
+if ($Inverse) { [array]::Reverse($projects); Write-Host "Ordre inverse : lecture par la fin de la liste" }
 Write-Host "Projets Innosuisse a lire : $($projects.Count)"
 
 # ---------- 2. Participants ----------
@@ -236,12 +242,13 @@ foreach ($p in $projects) {
   $i++
   $cache = Join-Path "aramis_cache_v4" ($p.Id + ".json")
   $parts = $null
-  if (Test-Path $cache) { $raw = Get-Content $cache -Raw -Encoding UTF8 | ConvertFrom-Json; $parts = @($raw | ForEach-Object { $_ }) }
-  else {
+  if (Test-Path $cache) { try { $raw = Get-Content $cache -Raw -Encoding UTF8 | ConvertFrom-Json; $parts = @($raw | ForEach-Object { $_ }) } catch { $parts = $null } }
+  if ($null -eq $parts) {
+    if ($mode -eq "page" -and $nNew % 20 -eq 0) { $mode = "ws"; $wsFails = 0 }   # nouvel essai du service web, plus rapide
     if ($mode -eq "ws") {
       $parts = Get-FromWs $p.Id
-      if ($null -eq $parts) { $wsFails++; if ($wsFails -ge 2) { $mode = "page"; Write-Host "  service web indisponible : lecture des pages publiques Beteiligte" } }
-      else { $parts = @($parts) }
+      if ($null -eq $parts) { $wsFails++; if ($wsFails -ge 3) { $mode = "page"; Write-Host "  service web indisponible : lecture des pages publiques Beteiligte" } }
+      else { $parts = @($parts); $wsFails = 0 }
     }
     if ($null -eq $parts) {
       try { $parts = @(Get-FromPage $p.Id) } catch { Write-Warning "  $($p.ProjectNumber) : echec ($($_.Exception.Message)), on continue"; Pause-Short; Pause-Short; continue }
