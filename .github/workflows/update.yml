@@ -1,0 +1,63 @@
+name: Mise à jour de l'atlas
+
+on:
+  schedule:
+    - cron: "17 3 4 * *"        # le 4 de chaque mois à 03:17 UTC, après la publication mensuelle de CORDIS
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atlas
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Installer les dépendances
+        run: |
+          pip install -r requirements.txt
+          npm ci
+
+      - name: Télécharger les sources (CORDIS, ARAMIS, Eurostat)
+        run: python scripts/fetch_sources.py .
+
+      - name: Participants Innosuisse des nouveaux projets
+        # au plus 3000 projets par passage ; le reste est repris le mois suivant
+        run: python scripts/aramis_participants.py --pause 0.6 --max 3000
+        continue-on-error: true
+
+      - name: Sièges des entreprises (numéros IDE, Zefix sur LINDAS)
+        if: hashFiles('data/state/innosuisse_participants.csv') != ''
+        run: python scripts/ide_sieges.py
+        continue-on-error: true
+
+      - name: Construire l'atlas
+        run: sh scripts/build_all.sh
+
+      - name: Résumé des contrôles
+        run: cat dist/controles.txt >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enregistrer la nouvelle version
+        run: |
+          git config user.name "atlas-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/state data/ref dist
+          if git diff --cached --quiet; then echo "Aucun changement"; exit 0; fi
+          git commit -m "Mise à jour mensuelle des données ($(date -u +%Y-%m-%d))"
+          git push

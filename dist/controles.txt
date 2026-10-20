@@ -1,0 +1,20 @@
+CORDIS : projets sans année exploitable 0 sur 59343
+CORDIS : participations par programme {'H2020': np.int64(179046), 'Horizon Europe': np.int64(148155)}
+CORDIS : participations suisses 8860 | canton identifié 8834
+CORDIS : participations vaudoises 1594 | organisations 245 | projets 1424
+CORDIS : organisations sans commune vaudoise []
+CORDIS : catégories {'Haute école': 3, 'Hôpital et santé': 2, 'Autre': 27, 'Entreprise': 205, 'Institut de recherche': 7}
+CORDIS : pays partenaires 103 | top [('DE', 2346), ('FR', 2026), ('IT', 1777), ('ES', 1727), ('UK', 1444), ('NL', 1260)]
+CORDIS : pays participants 201 | rang de la Suisse (participations) 11
+Comparaisons : lignes pays 5055 | lignes cantons 704
+Population : pays 37 | cantons 26 | années {2025: 70, 2019: 1} | CH 9051029 | VD 855106
+ARAMIS : projets Innosuisse 2018+ 8059 | NPA lu 3953 | organisation lue 7805
+ARAMIS : projets avec contact vaudois 449 | par adresse 323 | par nom d'institution (siège) 126 | CHF 106105096.99
+ARAMIS : entreprises vaudoises retrouvées par leur nom dans CORDIS 40 | projets 57 | CHF 23728739.28
+ARAMIS : projets dont le contact est une entreprise sans adresse 2067 | CHF 478378621
+ARAMIS : organisations vaudoises 16 | sans commune []
+ARAMIS : organisations [(195, 'HEIG-VD', 'Haute école'), (182, 'EPFL', 'Haute école'), (18, 'Université de Lausanne', 'Haute école'), (18, 'CHUV', 'Hôpital et santé'), (7, 'HETSL', 'Haute école'), (6, 'EHL', 'Haute école'), (5, 'Changins', 'Haute école'), (4, 'HEdS La Source', 'Haute école'), (3, 'Unisanté', 'Hôpital et santé'), (3, 'HESAV', 'Haute école'), (2, 'SIB Institut suisse de bioinformatique', 'Institut de recherche'), (2, 'ECAL', 'Haute école'), (1, 'Universität Bern', 'Haute école'), (1, 'IMD', 'Haute école'), (1, 'Fondation Asile des aveugles', 'Autre'), (1, 'Agroscope', 'Institut de recherche')]
+CONTRÔLE : UE vers VD 720647671.89 = source 720647671.89
+CONTRÔLE : CHF Innosuisse VD 129833836.27 = source 129833836.27 | projets distincts 506 = lignes 506
+CONTRÔLE : rôles VD {'participant': 617, 'coordinator': 466, 'associatedPartner': 458, 'thirdParty': 23, 'partner': 30}
+CONTRÔLE : participations VD sans projet connu 0

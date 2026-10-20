@@ -1,0 +1,7 @@
+node_modules/
+data/raw/
+data/cache/
+build/
+__pycache__/
+*.pyc
+innosuisse_participants_test.csv
