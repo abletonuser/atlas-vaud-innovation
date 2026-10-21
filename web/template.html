@@ -815,7 +815,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     }
     const ranked = [...vals.values()].filter((d) => d.v != null).sort((a, b) => b.v - a.v).map((d, i) => ({ ...d, rank: i + 1 }));
     const hi = ranked.find((d) => d.k === hiKey);
-    panel.insertAdjacentHTML("beforeend", `<div><h2>${sc === "europe" ? "Classement des pays" : "Classement des cantons"}</h2><p class="muted" style="font-size:.88rem">${esc(M.label)}. ${hi ? `${sc === "europe" ? "Suisse" : "Vaud"} : ${hi.rank}e sur ${fInt(ranked.length)}.` : ""} Cliquez une ligne pour le détail.</p></div>`);
+    panel.insertAdjacentHTML("beforeend", `<div><h2>${sc === "europe" ? "Classement des pays" : "Classement des cantons"}</h2><p class="muted" style="font-size:.88rem">${esc(M.label.replace(/\.$/, ""))}. ${hi ? `${sc === "europe" ? "Suisse" : "Vaud"} : ${hi.rank}e sur ${fInt(ranked.length)}.` : ""} Cliquez une ligne pour le détail.</p></div>`);
     const lim = sc === "europe" ? 25 : 26; let list = ranked.slice(0, lim);
     if (hi && !list.includes(hi)) list = [...list, null, hi];
     const mx = d3.max(ranked, (d) => d.v) || 1;
