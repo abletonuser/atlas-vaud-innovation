@@ -4,9 +4,9 @@ CORDIS : participations suisses 8860 | canton identifié 8834
 CORDIS : participations vaudoises 1594 | organisations 245 | projets 1424
 CORDIS : organisations sans commune vaudoise []
 CORDIS : catégories {'Haute école': 3, 'Hôpital et santé': 2, 'Autre': 27, 'Entreprise': 205, 'Institut de recherche': 7}
-CORDIS : pays partenaires 103 | top [('DE', 2346), ('FR', 2026), ('IT', 1777), ('ES', 1727), ('UK', 1444), ('NL', 1260)]
+CORDIS : pays partenaires 104 | top [('DE', 2346), ('FR', 2026), ('IT', 1777), ('ES', 1727), ('UK', 1444), ('NL', 1260)]
 CORDIS : pays participants 201 | rang de la Suisse (participations) 11
-Comparaisons : lignes pays 5055 | lignes cantons 704
+Comparaisons : lignes pays 5071 | lignes cantons 704
 Population : pays 37 | cantons 26 | années {2025: 70, 2019: 1} | CH 9051029 | VD 855106
 ARAMIS : projets Innosuisse 2018+ 8059 | NPA lu 3953 | organisation lue 7805
 ARAMIS : projets avec contact vaudois 449 | par adresse 323 | par nom d'institution (siège) 126 | CHF 106105096.99
