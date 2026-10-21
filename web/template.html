@@ -9,7 +9,7 @@
   --bg: #f2f4ef; --surface: #ffffff; --fg: #15201a; --muted: #5a665e; --line: #dde3da; --line-strong: #bcc6bb;
   --accent: #1d7a4b; --eu: #2b4fae; --ino: #c8372c; --land: #e7ece4; --land-hi: #d5dfd1; --water: #cde0ea;
   --eu-soft: #dde4f6; --ino-soft: #f7ddd9; --focus: #1d7a4b; --nodata: #f0f2ee;
-  --seq-a: #e4ebe6; --seq-b: #8db2d6; --seq-c: #1d3a8c;
+  --seq-a: #e4ebe6; --seq-b: #8db2d6; --seq-c: #1d3a8c; --iseq-a: #f3e9e5; --iseq-b: #e69a8f; --iseq-c: #8c1d15;
   --hero-bg: #0f2a1f; --hero-fg: #f2f6f1; --hero-muted: #a6bcaf; --hero-line: #2a4a3b; --hero-eu: #a9bfff; --hero-ino: #ff978c;
   --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
@@ -19,12 +19,12 @@
   --bg: #0f1411; --surface: #161c18; --fg: #e5ebe6; --muted: #9ba79f; --line: #2a332d; --line-strong: #3b463f;
   --accent: #5cbf89; --eu: #86a2ec; --ino: #f07b70; --land: #1c241f; --land-hi: #26302a; --water: #172631;
   --eu-soft: #1f2a45; --ino-soft: #3d2020; --focus: #5cbf89; --nodata: #111613;
-  --seq-a: #1f2a24; --seq-b: #3e6198; --seq-c: #a9c0ff; --hero-bg: #0a1b13; --hero-line: #22392d; color-scheme: dark; } }
+  --seq-a: #1f2a24; --seq-b: #3e6198; --seq-c: #a9c0ff; --iseq-a: #2a1f1d; --iseq-b: #9a4038; --iseq-c: #ffb0a6; --hero-bg: #0a1b13; --hero-line: #22392d; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #0f1411; --surface: #161c18; --fg: #e5ebe6; --muted: #9ba79f; --line: #2a332d; --line-strong: #3b463f;
   --accent: #5cbf89; --eu: #86a2ec; --ino: #f07b70; --land: #1c241f; --land-hi: #26302a; --water: #172631;
   --eu-soft: #1f2a45; --ino-soft: #3d2020; --focus: #5cbf89; --nodata: #111613;
-  --seq-a: #1f2a24; --seq-b: #3e6198; --seq-c: #a9c0ff; --hero-bg: #0a1b13; --hero-line: #22392d; color-scheme: dark; }
+  --seq-a: #1f2a24; --seq-b: #3e6198; --seq-c: #a9c0ff; --iseq-a: #2a1f1d; --iseq-b: #9a4038; --iseq-c: #ffb0a6; --hero-bg: #0a1b13; --hero-line: #22392d; color-scheme: dark; }
 
 body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
 .wrap { max-width: 1260px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px; display: grid; gap: 24px; }
@@ -225,7 +225,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
         <div class="pop" role="tooltip"><b>Pourquoi sans montant ?</b><p>Ce sont des participations vaudoises que CORDIS enregistre avec une contribution UE nulle.</p>
           <p>La raison principale est la <b>non-association</b> de la Suisse. Quand la Suisse n'est pas associée à un programme, ses chercheurs peuvent participer aux projets mais l'UE ne les paie pas : la Confédération (SEFRI) les finance directement. Ce fut le cas pour Horizon Europe de 2021 à 2024, et pour une partie de H2020 de 2014 à 2016.</p>
           <p>Selon les filtres :</p><ul><li><b id="a-he">—</b> partenaires associés Horizon Europe (non-association)</li><li><b id="a-h2">—</b> participations à des projets H2020 lancés de 2014 à 2016 (association partielle)</li><li><b id="a-oth">—</b> autres cas : partenaires non financés par choix, tiers liés</li></ul></div></div>
-      <div><span class="label">Coûts approuvés Innosuisse <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v ino" id="k-chf">—</span><span class="s" id="k-chf-s">—</span>
+      <div><span class="label"><span id="k-chf-l">Coûts approuvés Innosuisse</span> <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v ino" id="k-chf">—</span><span class="s" id="k-chf-s">—</span>
         <div class="pop" role="tooltip" id="pop-ino"><b>Projets Innosuisse comptés</b><p>Projets lancés depuis 2018 dont l'<b>organisation de contact</b> publiée par ARAMIS est vaudoise : adresse dans le canton, institution vaudoise nommée (EPFL, HEIG-VD, UNIL…), ou entreprise retrouvée par son nom parmi les entreprises vaudoises connues de CORDIS.</p>
           <p>Ce n'est pas encore « au moins un partenaire vaudois » : ARAMIS ne publie qu'une organisation de contact par projet, et depuis 2022 sans adresse pour les entreprises. La collecte des participants corrigera ce point.</p>
           <p><b>Où va l'argent ?</b> Dans un projet d'innovation classique, la subvention va au partenaire de recherche ; l'entreprise paie de 40 à 60 % des coûts et profite des résultats. Les start-up reçoivent l'argent directement dans les projets d'innovation de start-up (jusqu'à 70 % des coûts directs) et l'ont reçu dans le Swiss Accelerator lancé en 2022.</p></div></div>
@@ -246,7 +246,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     <div class="field"><label class="label" for="y0">Début du projet</label>
       <div style="display:flex;gap:6px;align-items:center"><select id="y0"></select><span class="muted">à</span><select id="y1" aria-label="Année de fin"></select></div></div>
     <div class="field"><span class="label">Type d'organisation</span><div class="chips" id="types"></div></div>
-    <div class="field vd-only"><span class="label">Source (carte vaudoise)</span>
+    <div class="field"><span class="label">Source</span>
       <div class="seg" role="group" aria-label="Source">
         <button type="button" data-src="all" aria-pressed="true">Les deux</button>
         <button type="button" data-src="EU" aria-pressed="false">UE</button>
@@ -315,7 +315,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       <div>
         <h3>Règles de calcul</h3>
         <ol>
-          <li>Les programmes-cadres UE se comptent par participation : le montant UE est attribué exactement à chaque organisation. Innosuisse se compte par projet : le montant n'est pas ventilé entre partenaires.</li>
+          <li id="rule-count">Les programmes-cadres UE se comptent par participation : le montant UE est attribué exactement à chaque organisation. Innosuisse se compte par projet : le montant n'est pas ventilé entre partenaires.</li>
           <li>Les deux sources mesurent des choses différentes et ne s'additionnent pas. Les euros et les francs restent séparés, sans conversion.</li>
           <li>Le montant Innosuisse est le coût total approuvé du projet. La subvention est versée au partenaire de recherche ; l'entreprise partenaire couvre en général de 40 à 60 % des coûts.</li>
           <li>Une participation suisse sans montant UE n'est pas un projet sans argent : quand la Suisse n'était pas associée (de 2021 à 2024 pour Horizon Europe, partiellement de 2014 à 2016 pour H2020), ses participants étaient en principe financés par la Confédération, hors de CORDIS. Pour comparer la Suisse à d'autres pays, préférer le nombre de participations au montant UE, et H2020 de 2017 à 2020 comme période de référence.</li>
@@ -387,9 +387,13 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     const pr = D.eu_projects[p.p];
     items.push({ ent: orgToEnt[p.o], src: "EU", fp: pr.fp, pid: p.p, y: pr.y, dom: pr.dom, prog: pr.fam, role: p.role, ec: p.ec, t: pr.t, acr: pr.acr, url: pr.url });
   }
-  for (const [pid, p] of Object.entries(D.ino_projects)) for (const [o, irole] of (p.os || [[p.o, "contact"]])) if (orgToEnt[o]) items.push({ ent: orgToEnt[o], src: "INNO", pid, y: p.y, dom: [p.dom], prog: p.instr, chf: p.chf, t: p.t, num: p.num, pos: p.pos, irole });
-  // montant d'un ensemble de projets Innosuisse : chaque projet compté une fois, même avec plusieurs partenaires vaudois
-  const chfSum = (list) => { const seenP = new Map(); for (const d of list) if (d.src === "INNO") seenP.set(d.pid, d.chf); return d3.sum([...seenP.values()]); };
+  for (const [pid, p] of Object.entries(D.ino_projects)) for (const [o, irole] of (p.os || [[p.o, "contact"]])) if (orgToEnt[o]) items.push({ ent: orgToEnt[o], src: "INNO", pid, y: p.y, dom: [p.dom], prog: p.instr, chf: p.chf, np: p.np || 0, t: p.t, num: p.num, pos: p.pos, irole });
+  // coût total d'un ensemble de projets Innosuisse : chaque projet compté une fois
+  const chfFull = (list) => { const seenP = new Map(); for (const d of list) if (d.src === "INNO") seenP.set(d.pid, d.chf); return d3.sum([...seenP.values()]); };
+  // montant attribué : le coût d'un projet est réparti à parts égales entre ses partenaires ; chaque organisation reçoit
+  // sa part. Les montants s'additionnent sans double compte entre organisations, districts et cantons.
+  const PART = D.ino_mode === "participants";
+  const chfSum = (list) => (PART ? d3.sum(list, (d) => (d.src === "INNO" && d.np ? d.chf / d.np : 0)) : chfFull(list));
   const communes = D.communes;
   const districtOf = (e) => (e.bfs != null && communes[e.bfs] ? communes[e.bfs].district : null);
 
@@ -423,12 +427,13 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
   fillGrouped(progSel, (d) => [d.prog], "Tous les programmes");
   domSel.addEventListener("change", () => { S.dom = domSel.value; render(); });
   progSel.addEventListener("change", () => { S.prog = progSel.value; render(); });
-  function segInit(attr, key) {
+  function segInit(attr, key, after) {
     document.querySelectorAll(`[data-${attr}]`).forEach((b) => b.addEventListener("click", () => {
-      S[key] = b.dataset[attr]; document.querySelectorAll(`[data-${attr}]`).forEach((x) => x.setAttribute("aria-pressed", x === b)); render();
+      S[key] = b.dataset[attr]; document.querySelectorAll(`[data-${attr}]`).forEach((x) => x.setAttribute("aria-pressed", x === b)); if (after) after(); render();
     }));
   }
-  segInit("fp", "fp"); segInit("src", "src");
+  function setSrc(v) { S.src = v; document.querySelectorAll("[data-src]").forEach((x) => x.setAttribute("aria-pressed", x.dataset.src === v)); }
+  segInit("fp", "fp"); segInit("src", "src", () => { S.geoSel = null; fillInd(); });
   document.querySelectorAll("[data-scale]").forEach((b) => b.addEventListener("click", () => setScale(b.dataset.scale)));
   const dl = $("orgnames");
   for (const e of [...ents.values()].sort((a, b) => a.name.localeCompare(b.name, "fr"))) dl.appendChild(new Option(e.name));
@@ -487,25 +492,34 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     partners: { label: "Partenaires de projets vaudois", f: fInt, only: "europe", v: (a) => a.partners },
   };
   if (D.ino_fed) Object.assign(IND, {
-    ino_bus: { label: "Innosuisse : projets avec une entreprise du canton", f: fInt, only: "suisse", ino: 0, v: (a) => a.n },
-    ino_bus_pc: { label: "Innosuisse : projets avec une entreprise, pour 100 000 hab.", f: f1, only: "suisse", ino: 0, pc: true, v: (a, pop) => (pop ? (a.n / pop) * 1e5 : null) },
-    ino_res: { label: "Innosuisse : projets avec un partenaire de recherche du canton", f: fInt, only: "suisse", ino: 1, v: (a) => a.n },
     ino_all: { label: "Innosuisse : projets avec au moins un partenaire du canton", f: fInt, only: "suisse", ino: 2, v: (a) => a.n },
-    ino_chf: { label: "Innosuisse : coûts des projets avec une entreprise du canton", f: chf, only: "suisse", ino: 0, v: (a) => a.chf },
+    ino_all_pc: { label: "Innosuisse : projets avec un partenaire du canton, pour 100 000 hab.", f: f1, only: "suisse", ino: 2, pc: true, v: (a, pop) => (pop ? (a.n / pop) * 1e5 : null) },
+    ino_bus: { label: "Innosuisse : projets avec une entreprise du canton", f: fInt, only: "suisse", ino: 0, v: (a) => a.n },
+    ino_bus_pc: { label: "Innosuisse : projets avec une entreprise du canton, pour 100 000 hab.", f: f1, only: "suisse", ino: 0, pc: true, v: (a, pop) => (pop ? (a.n / pop) * 1e5 : null) },
+    ino_res: { label: "Innosuisse : projets avec un partenaire de recherche du canton", f: fInt, only: "suisse", ino: 1, v: (a) => a.n },
+    ino_chf: { label: "Innosuisse : coûts attribués au canton", f: chf, only: "suisse", ino: 2, v: (a) => a.chf },
+    ino_chf_pc: { label: "Innosuisse : coûts attribués par habitant", f: (v) => f0(v) + " CHF", only: "suisse", ino: 2, pc: true, v: (a, pop) => (pop ? a.chf / pop : null) },
   });
   function inoAgg(side) {
     const out = new Map();
-    for (const [c, y, sd, n, v] of D.ino_fed || []) {
+    for (const [c, y, sd, n, v, nf] of D.ino_fed || []) {
       if (sd !== side || y < S.y0 || y > S.y1) continue;
-      const a = out.get(String(c)) || { n: 0, chf: 0 }; a.n += n; a.chf += v; out.set(String(c), a);
+      const a = out.get(String(c)) || { n: 0, chf: 0, nf: 0 }; a.n += n; a.chf += v; a.nf += nf || 0; out.set(String(c), a);
     }
     return out;
   }
   const indSel = $("ind");
+  const indOk = (m) => (!m.only || m.only === S.scale) && (S.src === "all" || (S.src === "INNO") === (m.ino != null));
   function fillInd() {
     indSel.innerHTML = "";
-    for (const [k, m] of Object.entries(IND)) if (!m.only || m.only === S.scale) indSel.add(new Option(m.label, k));
-    if (S.scale === "suisse" && !D.ino_fed) { const o = new Option("Projets Innosuisse (après la collecte)", ""); o.disabled = true; indSel.add(o); }
+    for (const [lab, isIno] of [["Programmes-cadres UE", false], ["Innosuisse", true]]) {
+      const ks = Object.entries(IND).filter(([, m]) => (m.ino != null) === isIno && indOk(m));
+      if (!ks.length) continue;
+      const g = document.createElement("optgroup"); g.label = lab;
+      for (const [k, m] of ks) g.appendChild(new Option(m.label.replace(/^Innosuisse : /, ""), k));
+      indSel.appendChild(g);
+    }
+    if (!IND[S.ind[S.scale]] || !indOk(IND[S.ind[S.scale]])) S.ind[S.scale] = S.scale === "suisse" && S.src === "INNO" && D.ino_fed ? "ino_all_pc" : "n_pc";
     indSel.value = S.ind[S.scale];
   }
   indSel.addEventListener("change", () => { S.ind[S.scale] = indSel.value; render(); });
@@ -630,6 +644,9 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     document.querySelectorAll("[data-scale]").forEach((x) => x.setAttribute("aria-pressed", x.dataset.scale === sc));
     document.querySelectorAll(".vd-only").forEach((el) => el.classList.toggle("off", sc !== "vaud"));
     $("ind-field").hidden = sc === "vaud";
+    const bIno = document.querySelector('[data-src="INNO"]'); bIno.disabled = sc === "europe";
+    bIno.title = sc === "europe" ? "Innosuisse ne finance que des projets suisses : pas de comparaison européenne" : "";
+    if (sc === "europe" && S.src === "INNO") setSrc("all");
     fillInd(); hideTip(); setExtent();
     gBub.attr("opacity", 0); gLab.attr("opacity", 0);
     render();
@@ -640,7 +657,8 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
   // --- couches choroplèthes ---
   function seqColor(vals, hue) {
     const mx = d3.max(vals) || 1;
-    return d3.scaleSequentialSqrt([0, mx], d3.interpolateRgbBasis([css("--seq-a"), css("--seq-b"), css("--seq-c")]));
+    const pre = hue === "ino" ? "--iseq-" : "--seq-";
+    return d3.scaleSequentialSqrt([0, mx], d3.interpolateRgbBasis([css(pre + "a"), css(pre + "b"), css(pre + "c")]));
   }
   let legendInfo = null;
   function drawChoro() {
@@ -653,7 +671,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     }
     commPaths.attr("display", "none"); gLines.attr("display", "none");
     const vals = geoValues(sc); const M = IND[S.ind[sc]];
-    const col = seqColor([...vals.values()].map((d) => d.v).filter((v) => v != null), "--eu");
+    const col = seqColor([...vals.values()].map((d) => d.v).filter((v) => v != null), M.ino != null ? "ino" : "eu");
     legendInfo = { col, M, max: d3.max([...vals.values()], (d) => d.v) || 0 };
     if (sc === "europe") {
       cantPaths.interrupt().attr("fill", "none"); cantPaths.on("click", null).on("mousemove", null).on("mouseleave", null);
@@ -684,7 +702,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     if (!d) return `<b>${esc(nm)}</b><br>Aucune participation selon les filtres`;
     const M = IND[S.ind[sc]];
     let h = `<b>${esc(nm)}</b><br>${esc(M.label)} : ${d.v != null ? M.f(d.v) : "non calculé (" + d.why + ")"}`;
-    if (d.ino) return h + `<br>${plural(d.a.n, "projet", "projets")}, ${chf(d.a.chf)} de coûts approuvés`;
+    if (d.ino) return h + `<br>${plural(d.a.n, "projet", "projets")} ; coûts attribués au canton : ${chf((inoAgg(2).get(d.k) || { chf: 0 }).chf)}`;
     h += `<br>${plural(d.a.n, "participation", "participations")}, ${fInt(d.a.coord)} coordinations`;
     if (sc === "europe" && d.a.partners) h += `<br>${fInt(d.a.partners)} co-participations avec Vaud`;
     return h;
@@ -697,7 +715,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     for (const d of list) {
       let a = m.get(d.ent.key);
       if (!a) { a = { e: d.ent, eu: new Set(), ino: new Set(), ec: 0, chf: 0, funded: 0, items: [] }; m.set(d.ent.key, a); }
-      if (d.src === "EU") { a.eu.add(d.pid); a.ec += d.ec; if (d.ec > 0) a.funded++; } else { a.ino.add(d.pid); a.chf += d.chf; }
+      if (d.src === "EU") { a.eu.add(d.pid); a.ec += d.ec; if (d.ec > 0) a.funded++; } else { a.ino.add(d.pid); a.chf += PART && d.np ? d.chf / d.np : d.chf; }
       a.items.push(d);
     }
     for (const a of m.values()) a.n = a.eu.size + a.ino.size;
@@ -747,14 +765,15 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     const c = a.e.bfs != null && communes[a.e.bfs] ? communes[a.e.bfs].name : "";
     let h = `<b>${esc(a.e.name)}</b><br>${esc(a.e.type)}${c ? " · " + esc(c) : ""}`;
     if (a.eu.size) h += `<br>UE : ${plural(a.eu.size, "participation", "participations")}${a.ec > 0 ? ", " + eur(a.ec) : ""}`;
-    if (a.ino.size) h += `<br>Innosuisse : ${plural(a.ino.size, "projet", "projets")}, ${chf(a.chf)}`;
+    if (a.ino.size) h += `<br>Innosuisse : ${plural(a.ino.size, "projet", "projets")}, ${chf(a.chf)}${PART ? " attribués" : ""}`;
     return h;
   }
 
   // ---------- Légende et légende de lecture ----------
+  const INO_Y = d3.extent(Object.values(D.ino_projects), (p) => p.y);
   function periodText(M) {
     const fp = S.fp === "all" ? "H2020 et Horizon Europe" : S.fp;
-    if ((M && M.ino !== undefined) || (S.scale === "vaud" && S.src === "INNO")) return `Innosuisse, projets lancés de ${Math.max(S.y0, 2018)} à ${S.y1}`;
+    if ((M && M.ino !== undefined) || (S.scale === "vaud" && S.src === "INNO")) return `Innosuisse, projets lancés de ${Math.max(S.y0, INO_Y[0] || 2018)} à ${Math.min(S.y1, INO_Y[1] || S.y1)}`;
     if (S.scale === "vaud" && S.src === "all") return `${fp} et Innosuisse, projets lancés de ${S.y0} à ${S.y1}`;
     return `${fp}, projets lancés de ${S.y0} à ${S.y1}`;
   }
@@ -768,7 +787,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       return;
     }
     const M = IND[S.ind[S.scale]];
-    $("caption").innerHTML = `<b>${S.scale === "europe" ? "Europe" : "Suisse"} · ${esc(M.label.charAt(0).toLowerCase() + M.label.slice(1))}</b>${esc(periodText(M))}`;
+    $("caption").innerHTML = `<b>${S.scale === "europe" ? "Europe" : "Suisse"} · ${esc(M.ino != null ? M.label : M.label.charAt(0).toLowerCase() + M.label.slice(1))}</b>${esc(periodText(M))}`;
     const hint = S.scale === "europe" ? " Cliquez la Suisse pour ses cantons." : " Cliquez deux fois Vaud pour ses organisations.";
     $("legend-text").textContent = (M.pct ? `Calculé au-delà de ${fInt(MIN[S.scale])} participations ; en gris, non calculé.` : M.pc ? "Population Eurostat ; en gris, population non publiée." : "En gris : aucune participation selon les filtres.") + hint;
     if (!legendInfo) return;
@@ -795,16 +814,18 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       panel.insertAdjacentHTML("beforeend", `<button type="button" class="back" id="back">← Retour au classement</button>
         <div class="fiche-head"><h3>${esc(nm(S.geoSel))}</h3><div class="tags"><span class="tag">${esc(periodText())}</span></div></div>
         <dl class="kv">
-          <dt>Participations</dt><dd>${fInt(d.a.n)}</dd>
+          ${(() => { const eu = `<dt>Participations</dt><dd>${fInt(d.a.n)}</dd>
           <dt>par million d'habitants</dt><dd>${d.pop ? f0((d.a.n / d.pop) * 1e6) : "—"}</dd>
           <dt>Coordinations</dt><dd>${fInt(d.a.coord)}${d.a.n ? " (" + f1((100 * d.a.coord) / d.a.n) + " %)" : ""}</dd>
           <dt>Participations d'entreprises</dt><dd>${fInt(d.a.prc)}${d.a.n ? " (" + f1((100 * d.a.prc) / d.a.n) + " %)" : ""}</dd>
           <dt>Participations avec montant UE</dt><dd>${fInt(d.a.funded)}</dd>
           <dt>Montant UE</dt><dd>${eur(d.a.ec)}</dd>
           <dt>par habitant</dt><dd>${d.pop ? f1(d.a.ec / d.pop) + " EUR" : "—"}</dd>
-          ${sc === "europe" ? `<dt>Co-participations avec Vaud</dt><dd>${fInt(d.a.partners || 0)}</dd>` : ""}
-          ${sc === "suisse" && D.ino_fed ? (() => { const b = inoAgg(0).get(S.geoSel) || { n: 0, chf: 0 }, r = inoAgg(1).get(S.geoSel) || { n: 0, chf: 0 };
-            return `<dt>Innosuisse, projets avec une entreprise du canton</dt><dd>${fInt(b.n)}</dd><dt>coûts approuvés de ces projets</dt><dd>${chf(b.chf)}</dd><dt>Innosuisse, projets avec un partenaire de recherche du canton</dt><dd>${fInt(r.n)}</dd>`; })() : ""}
+          ${sc === "europe" ? `<dt>Co-participations avec Vaud</dt><dd>${fInt(d.a.partners || 0)}</dd>` : ""}`;
+            let ino = "";
+            if (sc === "suisse" && D.ino_fed) { const z = { n: 0, chf: 0 }, t = inoAgg(2).get(S.geoSel) || z, b = inoAgg(0).get(S.geoSel) || z, r = inoAgg(1).get(S.geoSel) || z;
+              ino = `<dt>Innosuisse, projets avec au moins un partenaire du canton</dt><dd>${fInt(t.n)}</dd><dt>avec une entreprise du canton</dt><dd>${fInt(b.n)}</dd><dt>avec un partenaire de recherche du canton</dt><dd>${fInt(r.n)}</dd><dt>Innosuisse, coûts attribués au canton</dt><dd>${chf(t.chf)}</dd><dt>par habitant</dt><dd>${d.pop ? f0(t.chf / d.pop) + " CHF" : "—"}</dd>`; }
+            return S.src === "INNO" && ino ? ino : S.src === "EU" ? eu : M.ino != null ? ino + eu : eu + ino; })()}
           <dt>Population (Eurostat)</dt><dd>${d.pop ? fInt(d.pop) : "non publiée"}</dd>
         </dl>`);
       $("back").onclick = () => { S.geoSel = null; render(); };
@@ -825,7 +846,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       const li = document.createElement("li");
       if (!d) { li.className = "gapline"; ul.appendChild(li); continue; }
       const b = document.createElement("button"); b.type = "button"; if (d.k === hiKey) b.className = "hi";
-      b.innerHTML = `<span class="nm"><span class="rk">${d.rank}.</span>${esc(nm(d.k))}</span><span class="num">${esc(M.f(d.v))}</span><span class="bar"><i style="width:${(d.v / mx) * 100}%;background:${d.k === hiKey ? "var(--accent)" : "var(--eu)"}"></i></span>`;
+      b.innerHTML = `<span class="nm"><span class="rk">${d.rank}.</span>${esc(nm(d.k))}</span><span class="num">${esc(M.f(d.v))}</span><span class="bar"><i style="width:${(d.v / mx) * 100}%;background:${d.k === hiKey ? "var(--accent)" : M.ino != null ? "var(--ino)" : "var(--eu)"}"></i></span>`;
       b.onclick = () => { S.geoSel = d.k; render(); }; li.appendChild(b); ul.appendChild(li);
     }
     panel.appendChild(ul);
@@ -857,7 +878,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       <div class="fiche-head"><h3>${esc(e.name)}</h3><div class="tags"><span class="tag">${esc(e.type)}</span>${e.sme ? '<span class="tag">PME</span>' : ""}${c ? `<span class="tag">${esc(c.name)} · ${esc(c.district)}</span>` : ""}${pos}</div></div>
       <div class="stats">
         <div class="stat eu"><span class="v">${fInt(sel.eu.size)}</span><span class="s">participations UE${sel.eu.size ? ", dont " + fInt(sel.funded) + " avec montant UE" : ""}</span>${sel.ec > 0 ? `<span class="s num">${eur(sel.ec)}</span>` : ""}</div>
-        <div class="stat ino"><span class="v">${fInt(sel.ino.size)}</span><span class="s">projets Innosuisse</span>${sel.ino.size ? `<span class="s num">${chf(sel.chf)}</span>` : ""}</div>
+        <div class="stat ino"><span class="v">${fInt(sel.ino.size)}</span><span class="s">projets Innosuisse</span>${sel.ino.size ? `<span class="s num">${chf(sel.chf)}${PART ? " attribués" : ""}</span>` : ""}</div>
       </div>`);
     $("back").onclick = () => { S.sel = null; render(); };
     const ul = document.createElement("ul"); ul.className = "plist";
@@ -865,7 +886,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       const li = document.createElement("li");
       const title = d.src === "EU" ? `<a href="${d.url}" target="_blank" rel="noopener">${esc(d.acr)}</a> · ${esc(d.t)}` : esc(d.t);
       const role = { coordinator: "coordinateur", participant: "participant", partner: "partenaire", associatedPartner: "partenaire associé", thirdParty: "tiers lié" }[d.role] || "";
-      const meta = d.src === "EU" ? [d.fp, d.prog, role, d.ec > 0 ? eur(d.ec) : "sans montant UE"] : [d.prog, d.irole === "entreprise" ? "entreprise partenaire" : d.irole === "recherche" ? "partenaire de recherche" : null, d.dom[0], chf(d.chf), d.num];
+      const meta = d.src === "EU" ? [d.fp, d.prog, role, d.ec > 0 ? eur(d.ec) : "sans montant UE"] : [d.prog, d.irole === "entreprise" ? "entreprise partenaire" : d.irole === "recherche" ? "partenaire de recherche" : null, d.dom[0], (PART ? "coût du projet " : "") + chf(d.chf), d.num];
       li.innerHTML = `<span class="yr">${d.y}</span><span class="tt"><span class="src-mark ${d.src === "EU" ? "eu" : "ino"}">${d.src === "EU" ? "UE" : "INNO"}</span>${title}</span><span class="meta">${meta.filter(Boolean).map((m) => `<span>${esc(m)}</span>`).join("")}</span>`;
       ul.appendChild(li);
     }
@@ -890,7 +911,8 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     const aHe = zero.filter((d) => d.fp === "Horizon Europe" && d.role === "associatedPartner").length;
     const aH2 = zero.filter((d) => d.fp === "H2020" && d.y <= 2016).length;
     set("k-assoc", fInt(zero.length)); set("a-he", fInt(aHe)); set("a-h2", fInt(aH2)); set("a-oth", fInt(zero.length - aHe - aH2));
-    money("k-chf", chfSum(ino), "CHF"); set("k-chf-s", `${plural(inoP.size, "projet", "projets")} ${D.ino_mode === "participants" ? "avec un partenaire vaudois" : "dont le contact est vaudois"}`);
+    money("k-chf", chfSum(ino), "CHF");
+    set("k-chf-s", PART ? `part vaudoise de ${plural(inoP.size, "projet", "projets")}, coût total ${chf(chfFull(ino))}` : `${plural(inoP.size, "projet", "projets")} dont le contact est vaudois`);
   }
 
   // ---------- Districts ----------
@@ -975,7 +997,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     $("years-key").innerHTML = key.join("");
     const tEU = d3.sum(rows, (r) => r.fund + r.assoc), tF = d3.sum(rows, (r) => r.fund), tI = d3.sum(rows, (r) => r.ino);
     const scope = [orgOn ? ents.get(S.sel).name : C.dist ? "district " + C.dist : "Vaud", C.type || null].filter(Boolean).join(", ");
-    $("years-sum").textContent = `${scope}, ${S.y0} à ${S.y1} : ` + [showEU ? `${plural(tEU, "participation UE", "participations UE")} (dont ${fInt(tF)} avec montant, ${eur(d3.sum(rows, (r) => r.ec))})` : null, showINO ? `${plural(tI, "projet Innosuisse", "projets Innosuisse")} (${chf(d3.sum(rows, (r) => r.chf))})` : null].filter(Boolean).join(" ; ") + ".";
+    $("years-sum").textContent = `${scope}, ${S.y0} à ${S.y1} : ` + [showEU ? `${plural(tEU, "participation UE", "participations UE")} (dont ${fInt(tF)} avec montant, ${eur(d3.sum(rows, (r) => r.ec))})` : null, showINO ? `${plural(tI, "projet Innosuisse", "projets Innosuisse")} (${chf(d3.sum(rows, (r) => r.chf))}${PART ? " attribués" : ""})` : null].filter(Boolean).join(" ; ") + ".";
   }
 
   // ---------- Notes ----------
@@ -987,8 +1009,10 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     $("foot-next").textContent = "Données mises à jour automatiquement chaque mois.";
     $("src-zefix").hidden = false;
     $("pp-ino").innerHTML = "<b>Innosuisse</b> : au moins un partenaire du projet (entreprise ou institution de recherche) est établi dans le canton.";
-    $("ino-cover2").textContent = "Le montant reste le coût total approuvé du projet, sans ventilation entre partenaires.";
-    $("pop-ino").innerHTML = "<b>Projets Innosuisse comptés</b><p>Projets lancés depuis 2018 dont <b>au moins un partenaire est vaudois</b> : entreprise dont le siège est dans le canton (registre du commerce), ou institution de recherche vaudoise.</p><p><b>Où va l'argent ?</b> Dans un projet d'innovation classique, la subvention va au partenaire de recherche ; l'entreprise paie de 40 à 60 % des coûts et profite des résultats. Les start-up reçoivent l'argent directement dans les projets d'innovation de start-up (jusqu'à 70 % des coûts directs).</p><p>Montant : coût total approuvé du projet, compté une fois même avec plusieurs partenaires vaudois.</p>";
+    $("ino-cover2").textContent = "Montants : le coût approuvé de chaque projet est réparti à parts égales entre tous ses partenaires (comptage fractionnaire). Une organisation, un district ou un canton reçoit la part de ses partenaires, si bien qu'aucun franc n'est compté deux fois." + (st.chf_total ? ` ${f0((100 * st.chf_cantons) / st.chf_total)} % des coûts reviennent à des partenaires situés dans un canton ; le reste à des partenaires étrangers ou non localisés.` : "");
+    $("rule-count").textContent = "Les programmes-cadres UE se comptent par participation : le montant UE est attribué exactement à chaque organisation. Pour Innosuisse, le nombre de projets compte un projet une fois par organisation, district ou canton concerné ; le coût approuvé est réparti à parts égales entre les partenaires du projet, sans double compte.";
+    $("pop-ino").innerHTML = "<b>Projets Innosuisse comptés</b><p>Projets lancés depuis 2018 dont <b>au moins un partenaire est vaudois</b> : entreprise dont le siège est dans le canton (registre du commerce), ou institution de recherche vaudoise.</p><p><b>Où va l'argent ?</b> Dans un projet d'innovation classique, la subvention va au partenaire de recherche ; l'entreprise paie de 40 à 60 % des coûts et profite des résultats. Les start-up reçoivent l'argent directement dans les projets d'innovation de start-up (jusqu'à 70 % des coûts directs).</p><p><b>Montant attribué.</b> Le coût approuvé de chaque projet est réparti à parts égales entre tous ses partenaires, vaudois ou non ; Vaud reçoit la part de ses partenaires. Exemple : un projet de 900 000 CHF réunissant l'EPFL, une entreprise vaudoise et une entreprise zurichoise compte pour 600 000 CHF à Vaud et 300 000 CHF à Zurich. Aucun franc n'est ainsi compté deux fois, ni entre organisations, ni entre districts, ni entre cantons.</p>";
+    $("k-chf-l").textContent = "Innosuisse, part vaudoise";
   } else
   $("gapnote").innerHTML = `<b>Lacune connue de cette version.</b> Dans toute la Suisse, ${fInt(U.companies_n)} projets Innosuisse lancés depuis 2018 désignent comme contact une entreprise sans adresse publiée (${chf(U.companies_chf)} de coûts approuvés). Une partie de ces entreprises est vaudoise. Elles apparaîtront quand leurs adresses auront été collectées auprès du service web d'ARAMIS.`;
   $("gen").textContent = D.generated.split("-").reverse().join(".");
@@ -1001,7 +1025,8 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
 
   function filterSummary() {
     const parts = [S.fp === "all" ? "H2020 et Horizon Europe" : S.fp, `${S.y0} à ${S.y1}`, S.types.size === TYPES.length ? "tous types" : [...S.types].join(", ")];
-    if (S.scale === "vaud") { if (S.src !== "all") parts.push(S.src === "EU" ? "UE seulement" : "Innosuisse seulement"); if (S.dom) parts.push(S.dom.split("|")[1]); if (S.prog) parts.push(S.prog.split("|")[1]); }
+    if (S.src !== "all") parts.push(S.src === "EU" ? "UE seulement" : "Innosuisse seulement");
+    if (S.scale === "vaud") { if (S.dom) parts.push(S.dom.split("|")[1]); if (S.prog) parts.push(S.prog.split("|")[1]); }
     $("fsum").textContent = parts.join(" · ");
   }
   function render() {

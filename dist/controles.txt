@@ -4,9 +4,9 @@ CORDIS : participations suisses 8860 | canton identifié 8834
 CORDIS : participations vaudoises 1594 | organisations 245 | projets 1424
 CORDIS : organisations sans commune vaudoise []
 CORDIS : catégories {'Haute école': 3, 'Hôpital et santé': 2, 'Autre': 27, 'Entreprise': 205, 'Institut de recherche': 7}
-CORDIS : pays partenaires 104 | top [('DE', 2346), ('FR', 2026), ('IT', 1777), ('ES', 1727), ('UK', 1444), ('NL', 1260)]
+CORDIS : pays partenaires 103 | top [('DE', 2346), ('FR', 2026), ('IT', 1777), ('ES', 1727), ('UK', 1444), ('NL', 1260)]
 CORDIS : pays participants 201 | rang de la Suisse (participations) 11
-Comparaisons : lignes pays 5071 | lignes cantons 704
+Comparaisons : lignes pays 5055 | lignes cantons 704
 Population : pays 37 | cantons 26 | années {2025: 70, 2019: 1} | CH 9051029 | VD 855106
 ARAMIS : projets Innosuisse 2018+ 8059 | NPA lu 3953 | organisation lue 7805
 ARAMIS : projets avec contact vaudois 449 | par adresse 323 | par nom d'institution (siège) 126 | CHF 106105096.99
@@ -17,6 +17,7 @@ ARAMIS : organisations [(195, 'HEIG-VD', 'Haute école'), (182, 'EPFL', 'Haute �
 Innosuisse : participants collectés pour 99.8% des projets 2018+
 Innosuisse participants : {'projets': 8031, 'entreprises': 6525, 'entreprises_localisees': 6237, 'recherche': 1066, 'recherche_localisee': 914}
 Innosuisse : institutions de recherche sans canton (top) [('Universität Liechtenstein', 4), ('University of Liechtenstein', 2), ('Hoval Aktiengesellschaft CHE-491.026.449', 2), ('Tournesol', 1), ('eScooterLab', 1), ('Verein für eine faire soziale Infrastruktur', 1), ('LS instruments', 1), ('Schweizerischen Gesellschaft für Laufbahn- und Personalpsychologie (S GLP)', 1), ('EcoVroom', 1), ('Dachverband für offene Arbeit mit Kindern in der Stadt Bern', 1), ('Helvetia Solux ? Verein für Ethik, KI & Innovation', 1), ('Safespace Research AG', 1)]
+Innosuisse : coûts attribués aux cantons 1,725,581,875 sur 1,760,753,369 CHF (98.0%) ; reste : partenaires étrangers ou non localisés
 Innosuisse VD : projets 1133 | organisations 724 | entreprises 583
 CONTRÔLE : Innosuisse VD (participants) 1133 projets | CHF 324007660.18 | projets sans organisation positionnée 2
 CONTRÔLE : UE vers VD 720647671.89 = source 720647671.89

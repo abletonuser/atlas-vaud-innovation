@@ -110,12 +110,23 @@ def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, l
     log("Innosuisse participants :", stats)
     log("Innosuisse : institutions de recherche sans canton (top)", Counter(res.loc[res["canton"].isna(), "Company"]).most_common(12))
 
+    # Montant attribué (comptage fractionnaire) : le coût approuvé d'un projet est réparti à parts égales entre ses
+    # partenaires ; un canton reçoit la part de ses partenaires. Aucun franc n'est compté deux fois entre cantons.
+    p["np"] = p.groupby("ProjectNumber")["key"].transform("size")
+    p["share"] = p["chf"] / p["np"]
+    bus, res = p[p["is_business"]], p[~p["is_business"]]
     fed = []
     for side, df in [(0, bus), (1, res), (2, p)]:
-        g = df.dropna(subset=["canton"]).drop_duplicates(["ProjectNumber", "canton"])
+        g = df.dropna(subset=["canton"])
         for (c, y), gg in g.groupby(["canton", "year"]):
             if c in CANTON_ID:
-                fed.append([CANTON_ID[c], int(y), side, int(len(gg)), round(float(gg["chf"].sum()), 2)])
+                fed.append([CANTON_ID[c], int(y), side, int(gg["ProjectNumber"].nunique()), round(float(gg["share"].sum()), 2),
+                            round(float((1 / gg["np"]).sum()), 3)])
+    tot = p.drop_duplicates("ProjectNumber")["chf"].sum()
+    att = p.loc[p["canton"].isin(CANTON_ID), "share"].sum()
+    stats["chf_total"] = round(float(tot), 2); stats["chf_cantons"] = round(float(att), 2)
+    log(f"Innosuisse : coûts attribués aux cantons {att:,.0f} sur {tot:,.0f} CHF ({att / tot:.1%}) ; reste : partenaires étrangers ou non localisés")
+    meta = meta.copy(); meta["np"] = p.groupby("ProjectNumber").size()
 
     vd = p[p["canton"] == "VD"]
     vd_orgs, vd_projects = {}, defaultdict(list)

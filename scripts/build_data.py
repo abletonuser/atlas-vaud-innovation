@@ -340,7 +340,8 @@ if participants_complete(PART):
         title = next((t for t in [r["Projekttitel französisch"], r["Projekttitel englisch"], r["Projekttitel deutsch"]]
                       if isinstance(t, str) and t.strip()), "")
         ino_projects["I" + num] = {"os": [[o, role] for o, role in lst], "num": num, "t": title, "y": int(r["start"].year),
-                                   "chf": round(float(r["chf"]), 2), "dom": r["dom"], "instr": r["instr"], "pos": "participant"}
+                                   "chf": round(float(r["chf"]), 2), "np": int(r["np"]) if r["np"] == r["np"] else 1,
+                                   "dom": r["dom"], "instr": r["instr"], "pos": "participant"}
     ivd = ino[ino["Projektnummer"].isin(vd_projects2)]
     ino_years = {int(y): {"n": int(len(g)), "chf": round(float(g["chf"].sum()), 2)} for y, g in ivd.groupby(ivd["start"].dt.year)}
     ino_fed, ino_mode = fed, "participants"
