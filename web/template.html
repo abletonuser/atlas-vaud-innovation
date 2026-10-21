@@ -331,6 +331,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
         <ul>
           <li>CORDIS, <a href="https://data.europa.eu/88u/dataset/cordisH2020projects" target="_blank" rel="noopener">projets H2020</a> et <a href="https://data.europa.eu/data/datasets/cordis-eu-research-projects-under-horizon-europe-2021-2027" target="_blank" rel="noopener">projets Horizon Europe</a>, Office des publications de l'UE, CC BY 4.0.</li>
           <li><a href="https://www.aramis.admin.ch" target="_blank" rel="noopener">ARAMIS</a>, SEFRI, www.aramis.admin.ch, export complet.</li>
+          <li id="src-zefix" hidden>Participants des projets Innosuisse : service web public d'ARAMIS. Sièges des entreprises : registre du commerce (Zefix), données ouvertes <a href="https://lindas.admin.ch" target="_blank" rel="noopener">LINDAS</a> de la Confédération.</li>
           <li>Population : <a href="https://ec.europa.eu/eurostat/databrowser/view/demo_r_pjanaggr3/default/table?lang=fr" target="_blank" rel="noopener">Eurostat, demo_r_pjanaggr3</a>.</li>
           <li>Limites communales et cantonales 2026 : OFS et swisstopo, via le paquet swiss-maps. Pays : Natural Earth, via world-atlas. Codes postaux : GeoNames, CC BY 4.0.</li>
         </ul>
@@ -338,7 +339,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     </div>
   </details>
   </section>
-  <footer><span><b>Atlas vaudois de l'innovation</b> · données publiques CORDIS, ARAMIS et Eurostat</span><span>À venir : entreprises partenaires des projets Innosuisse et vue fédérale par canton.</span></footer>
+  <footer><span><b>Atlas vaudois de l'innovation</b> · données publiques CORDIS, ARAMIS et Eurostat</span><span id="foot-next">À venir : entreprises partenaires des projets Innosuisse et vue fédérale par canton.</span></footer>
 </div>
 
 <script id="data" type="application/json">__DATA__</script>
@@ -983,6 +984,8 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     const st = D.ino_stats;
     $("gapnote").innerHTML = `<b>Couverture Innosuisse.</b> ${fInt(st.projets)} projets lancés depuis 2018, avec tous leurs partenaires. Entreprises : ${fInt(st.entreprises_localisees)} sur ${fInt(st.entreprises)} situées par leur siège au registre du commerce (numéro IDE). Partenaires de recherche : ${fInt(st.recherche_localisee)} sur ${fInt(st.recherche)} situés par leur nom.`;
     $("ino-cover").textContent = "ARAMIS publie pour chaque projet ses partenaires : institution de recherche (contact et direction scientifique) et entreprises partenaires, avec leur numéro IDE. Le siège des entreprises vient du registre du commerce (Zefix, données ouvertes LINDAS). Un projet compte pour un canton dès qu'un de ses partenaires y est établi ; il peut donc compter pour plusieurs cantons.";
+    $("foot-next").textContent = "Données mises à jour automatiquement chaque mois.";
+    $("src-zefix").hidden = false;
     $("pp-ino").innerHTML = "<b>Innosuisse</b> : au moins un partenaire du projet (entreprise ou institution de recherche) est établi dans le canton.";
     $("ino-cover2").textContent = "Le montant reste le coût total approuvé du projet, sans ventilation entre partenaires.";
     $("pop-ino").innerHTML = "<b>Projets Innosuisse comptés</b><p>Projets lancés depuis 2018 dont <b>au moins un partenaire est vaudois</b> : entreprise dont le siège est dans le canton (registre du commerce), ou institution de recherche vaudoise.</p><p><b>Où va l'argent ?</b> Dans un projet d'innovation classique, la subvention va au partenaire de recherche ; l'entreprise paie de 40 à 60 % des coûts et profite des résultats. Les start-up reçoivent l'argent directement dans les projets d'innovation de start-up (jusqu'à 70 % des coûts directs).</p><p>Montant : coût total approuvé du projet, compté une fois même avec plusieurs partenaires vaudois.</p>";
