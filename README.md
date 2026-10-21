@@ -4,7 +4,7 @@ Carte des projets d'innovation financés par l'Union européenne (H2020, Horizon
 
 ## Mise à jour automatique
 
-Le flux `.github/workflows/update.yml` tourne le 4 de chaque mois (et à la demande, onglet *Actions*) :
+Le flux `.github/workflows/update.yml` tourne le 4 de chaque mois (et à la demande : onglet *Actions*, ou modification de `data/state/declencheur.txt`) :
 
 1. `scripts/fetch_sources.py` télécharge CORDIS (H2020 et Horizon Europe), l'export ARAMIS et la population Eurostat.
 2. `scripts/aramis_participants.py` lit les partenaires des **nouveaux** projets Innosuisse (service web public ARAMIS) et les ajoute à `data/state/innosuisse_participants.csv`.

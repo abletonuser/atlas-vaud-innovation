@@ -305,7 +305,7 @@ def participants_complete(path):
     got = set(pd.read_csv(path, dtype=str, usecols=["ProjectNumber"])["ProjectNumber"])
     share = len(got & set(ino["Projektnummer"])) / max(1, len(ino))
     log(f"Innosuisse : participants collectés pour {share:.1%} des projets 2018+")
-    return share >= 0.95
+    return share >= float(os.environ.get("INNO_SEUIL", "0.95"))
 if participants_complete(PART):
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import innosuisse_partners as IP

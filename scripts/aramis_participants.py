@@ -70,43 +70,79 @@ def parse_list_page(h):
     return rows
 
 
+def get_list(params):
+    for attempt in range(3):
+        try:
+            r = S.get(LIST_URL, params=params, timeout=60); r.raise_for_status(); r.encoding = "utf-8"
+            return r.text
+        except requests.RequestException:
+            if attempt == 2:
+                raise
+            time.sleep(5 * (attempt + 1))
+
+
+def last_page(h):
+    return max([int(x) for x in re.findall(r"page=(\d+)", h)] + [1])
+
+
 def list_projects(depuis, pause, test):
+    """Liste des projets Innosuisse. Tri par identifiant interne (clé unique) : le tri par date de début, plein
+    d'ex aequo, rend la pagination instable (environ 8 % de projets sautés ou lus deux fois, vérifié en octobre 2026)."""
     first = get_text(LIST_URL)
-    filt = ""
+    filt = []
     for name, body in re.findall(r'(?is)<select\b[^>]*\bname="([^"]+)"[^>]*>(.*?)</select>', first):
         for val, label in re.findall(r'(?is)<option\b[^>]*\bvalue="([^"]*)"[^>]*>(.*?)</option>', body):
             lab = strip(label)
             if "INNOSUISSE" in lab and "EVAL" not in lab and val:
-                filt = {html.unescape(name): html.unescape(val)}
-    params = lambda page, f: {"q[s]": "start_date desc", "page": page, **(f or {})}
-    p1 = S.get(LIST_URL, params=params(1, filt), timeout=60).text
-    rows = parse_list_page(p1)
+                filt = [(html.unescape(name), html.unescape(val))]
+    base = [("q[s]", "id desc")]
+    p1 = get_list(base + filt + [("page", 1)]); rows = parse_list_page(p1)
     if filt and rows and sum("INNOSUISSE" in r["Office"] for r in rows) / len(rows) < 0.8:
         print("  filtre Innosuisse ignoré (non appliqué par le site)")
-        filt = ""; p1 = S.get(LIST_URL, params=params(1, ""), timeout=60).text; rows = parse_list_page(p1)
-    last = max([int(x) for x in re.findall(r"page=(\d+)", p1)] + [1])
-    ys = [r["Year"] for r in rows if r["Year"]]
-    ordered = len(ys) >= 2 and ys[0] >= ys[-1]
-    print(f"  page 1 : {len(rows)} projets ; {last} pages ; tri par date {'actif' if ordered else 'non confirmé'}")
+        filt = []; p1 = get_list(base + [("page", 1)]); rows = parse_list_page(p1)
     if not rows:
         raise SystemExit("Aucun projet reconnu sur la page de liste ARAMIS : structure du site modifiée ?")
-    out, seen, page = [], set(), 1
+    # filtre sur la date de début, gardé seulement s'il réduit vraiment la liste
+    for fmt in (f"{depuis}-01-01", f"01.01.{depuis}"):
+        extra = [("q[start_date_gteq]", fmt)]
+        t = get_list(base + filt + extra + [("page", 1)]); r2 = parse_list_page(t)
+        if r2 and last_page(t) < last_page(p1) and all(r["Year"] is None or r["Year"] >= depuis for r in r2):
+            base += extra; p1, rows = t, r2
+            print(f"  filtre de date actif ({fmt})"); break
+    last = last_page(p1)
+    print(f"  {last} pages à lire")
+    out, seen, nrows, page = [], set(), 0, 1
     while True:
+        nrows += len(rows)
         for r in rows:
             inno = INNO_NUM.search(r["ProjectNumber"] or "") or ("INNOSUISSE" in r["Office"] and "EVAL" not in r["Office"])
             if inno and (r["Year"] is None or r["Year"] >= depuis) and r["Id"] not in seen:
                 seen.add(r["Id"]); out.append(r)
-        py = [r["Year"] for r in rows if r["Year"]]
-        if test or page >= last or (ordered and py and max(py) < depuis):
+        if test or page >= last:
             break
         page += 1; time.sleep(pause)
         try:
-            rows = parse_list_page(S.get(LIST_URL, params=params(page, filt), timeout=60).text)
+            rows = parse_list_page(get_list(base + filt + [("page", page)]))
         except requests.RequestException as e:
             print(f"  page {page} : échec ({e}), on continue"); rows = []
-        if page % 25 == 0:
+        if page % 50 == 0:
             print(f"  page {page}/{last} : {len(out)} projets Innosuisse")
+    print(f"  lignes lues {nrows}, projets distincts {len(seen)} (projets Innosuisse {depuis}+ : {len(out)})")
     return out
+
+
+def controle_export(listed, depuis, path="data/raw/aramis_full_export.csv"):
+    """Compare la liste lue à l'export officiel ARAMIS : signale les projets Innosuisse absents de la liste."""
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8-sig") as f:
+        exp = {r["Projektnummer"] for r in csv.DictReader(f)
+               if r.get("Forschungsstelle") == "INNOSUISSE" and (r.get("Projektstart") or "")[:4].isdigit()
+               and int(r["Projektstart"][:4]) >= depuis}
+    got = {p["ProjectNumber"] for p in listed}
+    miss = exp - got
+    print(f"  contrôle : export ARAMIS {len(exp)} projets Innosuisse {depuis}+, absents de la liste {len(miss)}"
+          + (f" (ex. {sorted(miss)[:5]})" if miss else ""))
 
 
 # ---------- 2. Participants ----------
@@ -214,9 +250,11 @@ def main():
         with open(a.state, encoding="utf-8-sig") as f:
             done = {r["AramisId"] for r in csv.DictReader(f)}
     print(f"Projets déjà collectés : {len(done)}")
-    projects = [p for p in list_projects(a.depuis, a.pause, a.test) if p["Id"] not in done]
-    if a.anciens_d_abord:
-        projects.reverse()
+    listed = list_projects(a.depuis, min(a.pause, 0.3), a.test)
+    if not a.test:
+        controle_export(listed, a.depuis)
+    projects = [p for p in listed if p["Id"] not in done]
+    projects.sort(key=lambda p: p["Year"] or 0, reverse=not a.anciens_d_abord)
     if a.test:
         projects = projects[:3]
     elif a.max:
