@@ -172,7 +172,10 @@ select, input[type="search"] { font: inherit; font-size: .92rem; color: var(--fg
 .chart .ptitle { font-family: var(--f-body); font-size: 12px; fill: var(--fg); font-weight: 600; }
 .keyrow { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .82rem; color: var(--muted); }
 .keyrow span { display: inline-flex; align-items: center; gap: 6px; }
-.sw { width: 12px; height: 10px; display: inline-block; border-radius: 2px; }
+.sw { width: 12px; height: 10px; display: inline-block; border-radius: 2px; flex: none; }
+.band rect { fill: url(#hatchY); } .band text { font-family: var(--f-body); font-size: 10.5px; fill: var(--muted); }
+#hatchY .hb { fill: var(--nodata); } #hatchY .hl2 { stroke: var(--line-strong); stroke-width: 1.2; }
+.keyrow .hatch .sw { background: repeating-linear-gradient(45deg, var(--line-strong) 0 1.2px, var(--nodata) 1.2px 4px); outline: 1px solid var(--line-strong); }
 
 .filterbox { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; }
 .filterbox > summary { cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; list-style: none; }
@@ -320,6 +323,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
           <li>Le montant Innosuisse est le coût total approuvé du projet. La subvention est versée au partenaire de recherche ; l'entreprise partenaire couvre en général de 40 à 60 % des coûts.</li>
           <li>Une participation suisse sans montant UE n'est pas un projet sans argent : quand la Suisse n'était pas associée (de 2021 à 2024 pour Horizon Europe, partiellement de 2014 à 2016 pour H2020), ses participants étaient en principe financés par la Confédération, hors de CORDIS. Pour comparer la Suisse à d'autres pays, préférer le nombre de participations au montant UE, et H2020 de 2017 à 2020 comme période de référence.</li>
           <li>Les comparaisons par habitant utilisent la population au 1er janvier publiée par Eurostat (la plus récente disponible). Les parts en pourcentage ne sont calculées qu'au-delà d'un volume minimal, indiqué sur la carte.</li>
+          <li>HES-SO : ses écoles (HEIG-VD, ECAL, HESAV, HETSL, La Source et Changins pour Vaud) participent aux programmes UE sous une seule entité juridique, dont le siège est à Delémont. CORDIS ne précisant pas l'école, ces participations sont comptées au Jura. Dans ARAMIS, Innosuisse nomme l'école.</li>
           <li>La position d'une organisation est celle de l'adresse publiée par la source, donc souvent le siège. L'EPFL est placée sur son campus d'Ecublens. Aucune personne n'est affichée.</li>
         </ol>
       </div>
@@ -869,6 +873,11 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       });
       panel.appendChild(ul);
       if (!top.length) panel.insertAdjacentHTML("beforeend", `<p class="muted">Aucune organisation ne correspond aux filtres.</p>`);
+      if (S.src !== "INNO" && S.types.has("Haute école") && D.hesso) {
+        let n = 0, ec = 0;
+        for (const [fpi, y, k, v] of D.hesso) { if ((S.fp !== "all" && FPI[S.fp] !== fpi) || y < S.y0 || y > S.y1) continue; n += k; ec += v; }
+        if (n) panel.insertAdjacentHTML("beforeend", `<p class="note"><b>HEIG-VD et autres HES vaudoises.</b> Elles participent aux programmes UE sous la HES-SO, entité juridique unique dont le siège est à Delémont. CORDIS ne précise pas l'école : les ${plural(n, "participation", "participations")} de la HES-SO selon les filtres (${eur(ec)}, toutes écoles confondues) sont comptées au Jura et n'apparaissent pas sur cette carte. Côté Innosuisse, la HEIG-VD figure sous son propre nom.</p>`);
+      }
       return;
     }
     const e = sel.e; const c = e.bfs != null && communes[e.bfs] ? communes[e.bfs] : null;
@@ -945,6 +954,10 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     C[key] = b.dataset[attr]; document.querySelectorAll(`[data-${attr}]`).forEach((x) => x.setAttribute("aria-pressed", x === b)); drawYears(lastList);
   }));
   let lastSel = null;
+  const NONASSOC = [
+    { a: 2014, b: 2016, t: "H2020 : association partielle", s: "Assoc. partielle", d: "Projets issus des appels H2020 de 2014 à 2016 : après le vote du 9 février 2014, la Suisse n'était associée qu'à une partie de H2020. Ses participants aux autres volets étaient financés par la Confédération." },
+    { a: 2022, b: 2025, t: "Horizon Europe : Suisse non associée", s: "Non associée", d: "Projets issus des appels Horizon Europe de 2021 à 2024 : la Suisse n'était pas associée. Ses participants pouvaient prendre part à la plupart des projets, sans fonds UE ni coordination ; la Confédération (SEFRI) les finançait directement. Association rétablie au 1er janvier 2025 : premiers projets financés par l'UE en 2026." },
+  ];
   function drawYears(list) {
     if (S.sel !== lastSel) { lastSel = S.sel; C.org = true; cOrg.checked = true; }
     const orgOn = !!S.sel && C.org;
@@ -957,11 +970,27 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     });
     const showEU = C.src !== "INNO" && S.src !== "INNO", showINO = C.src !== "EU" && S.src !== "EU";
     const el = $("years"); el.innerHTML = "";
-    const w = Math.max(300, el.clientWidth || 560), m = { t: 12, r: 8, b: 26, l: 44 };
+    const w = Math.max(300, el.clientWidth || 560), m = { t: showEU ? 26 : 12, r: 8, b: 26, l: 44 };
     const x0 = d3.scaleBand().domain(ys).range([m.l, w - m.r]).paddingInner(0.22);
     const ticks = ys.filter((v, i) => ys.length <= w / 48 || i % Math.ceil(ys.length / (w / 48)) === 0);
     const svgY = d3.select(el).append("svg").attr("role", "img");
     const key = []; const sw = (st, txt) => `<span><i class="sw" style="${st}"></i>${txt}</span>`;
+    svgY.append("defs").html('<pattern id="hatchY" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hb"/><line x1="0" y1="0" x2="0" y2="6" class="hl2"/></pattern>');
+    // périodes où la Suisse n'était pas (pleinement) associée, par année de début des projets
+    function drawBands(g, h) {
+      if (!showEU) return;
+      let any = false;
+      for (const B of NONASSOC) {
+        const ya = Math.max(B.a, S.y0), yb = Math.min(B.b, S.y1); if (ya > yb) continue;
+        const pad = (x0.step() * x0.paddingInner()) / 2, xa = x0(ya) - pad, xb = x0(yb) + x0.bandwidth() + pad;
+        const gb = g.append("g").attr("class", "band");
+        gb.append("rect").attr("x", xa).attr("width", xb - xa).attr("y", m.t - 2).attr("height", h - m.b - m.t + 2);
+        gb.append("text").attr("x", xa + 3).attr("y", m.t - 7).text(xb - xa > 120 ? B.t : B.s);
+        gb.append("title").text(B.d); any = true;
+      }
+      if (any) bandKey = (`<span class="hatch"><i class="sw"></i>Suisse non associée ou partiellement associée : participants financés par la Confédération (SEFRI), hors CORDIS</span>`);
+    }
+    let bandKey = null;
     function panel(g, h, maxV, fmt) {
       const y = d3.scaleLinear().domain([0, maxV || 1]).nice(4).range([h - m.b, m.t]);
       g.append("g").attr("class", "grid axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(fmt)).call((a) => a.select(".domain").remove());
@@ -972,7 +1001,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       const h = 250; svgY.attr("viewBox", `0 0 ${w} ${h}`).attr("aria-label", "Nombre de participations et de projets par année de début");
       const srcs = [showEU && "eu", showINO && "ino"].filter(Boolean);
       const x1 = d3.scaleBand().domain(srcs).range([0, x0.bandwidth()]).padding(0.08);
-      const y = panel(svgY.append("g"), h, d3.max(rows, (r) => Math.max(showEU ? r.fund + r.assoc : 0, showINO ? r.ino : 0)), fInt);
+      const g0 = svgY.append("g"); const y = panel(g0, h, d3.max(rows, (r) => Math.max(showEU ? r.fund + r.assoc : 0, showINO ? r.ino : 0)), fInt); drawBands(g0, h);
       const g = svgY.selectAll("g.yr").data(rows).join("g").attr("class", "yr").attr("transform", (r) => `translate(${x0(r.y)},0)`);
       if (showEU) {
         g.append("rect").attr("x", x1("eu")).attr("width", x1.bandwidth()).attr("y", (r) => y(r.fund)).attr("height", (r) => y(0) - y(r.fund)).attr("fill", "var(--eu)");
@@ -983,17 +1012,18 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       g.append("title").text((r) => `${r.y}` + (showEU ? ` · UE : ${fInt(r.fund)} participations avec montant, ${fInt(r.assoc)} sans montant` : "") + (showINO ? ` · Innosuisse : ${fInt(r.ino)} projets` : ""));
     } else {
       // Montants : un panneau par source, chacun dans sa monnaie (pas d'axe commun EUR / CHF)
-      const ph = 170; const panels = [showEU && { k: "ec", t: "UE, montant versé (mio EUR)", c: "var(--eu)" }, showINO && { k: "chf", t: "Innosuisse, coûts approuvés (mio CHF)", c: "var(--ino)" }].filter(Boolean);
-      const h = panels.length * (ph + 18); svgY.attr("viewBox", `0 0 ${w} ${h}`).attr("aria-label", "Montants par année de début");
+      const ph = 170; const panels = [showEU && { k: "ec", t: "UE, montant versé (mio EUR)", c: "var(--eu)" }, showINO && { k: "chf", t: PART ? "Innosuisse, coûts attribués à Vaud (mio CHF)" : "Innosuisse, coûts approuvés (mio CHF)", c: "var(--ino)" }].filter(Boolean);
+      const h = panels.length * (ph + 18) + (showEU ? 10 : 0); svgY.attr("viewBox", `0 0 ${w} ${h}`).attr("aria-label", "Montants par année de début");
       panels.forEach((P, i) => {
-        const g = svgY.append("g").attr("transform", `translate(0,${i * (ph + 18) + 14})`);
+        const g = svgY.append("g").attr("transform", `translate(0,${i * (ph + 18) + 14 + (showEU ? 10 : 0)})`);
         g.append("text").attr("class", "ptitle").attr("x", m.l).attr("y", -2).text(P.t);
-        const y = panel(g, ph, d3.max(rows, (r) => r[P.k]), (v) => f1(v / 1e6));
-        const b = g.selectAll("rect").data(rows).join("rect").attr("x", (r) => x0(r.y)).attr("width", x0.bandwidth()).attr("y", (r) => y(r[P.k])).attr("height", (r) => y(0) - y(r[P.k])).attr("fill", P.c);
+        const y = panel(g, ph, d3.max(rows, (r) => r[P.k]), (v) => f1(v / 1e6)); if (P.k === "ec") drawBands(g, ph);
+        const b = g.selectAll("rect.bar").data(rows).join("rect").attr("class", "bar").attr("x", (r) => x0(r.y)).attr("width", x0.bandwidth()).attr("y", (r) => y(r[P.k])).attr("height", (r) => y(0) - y(r[P.k])).attr("fill", P.c);
         b.append("title").text((r) => `${r.y} : ${P.k === "ec" ? eur(r.ec) : chf(r.chf)}`);
         key.push(sw(`background:${P.c}`, P.t));
       });
     }
+    if (bandKey) key.push(bandKey);
     $("years-key").innerHTML = key.join("");
     const tEU = d3.sum(rows, (r) => r.fund + r.assoc), tF = d3.sum(rows, (r) => r.fund), tI = d3.sum(rows, (r) => r.ino);
     const scope = [orgOn ? ents.get(S.sel).name : C.dist ? "district " + C.dist : "Vaud", C.type || null].filter(Boolean).join(", ");
@@ -1020,7 +1050,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     const n = $("mapnote");
     if (S.scale === "vaud") { n.hidden = true; return; }
     n.hidden = false;
-    n.textContent = "Lecture : pendant la non-association (Horizon Europe 2021 à 2024, H2020 partiellement 2014 à 2016), les participants suisses ne recevaient en général ni fonds UE ni coordination. Pour situer la Suisse et les cantons, préférez les participations par habitant, et H2020 de 2017 à 2020 comme période de référence." + (S.scale === "europe" ? " La population n'est publiée par Eurostat que pour les pays européens couverts par ses statistiques régionales." : "");
+    n.textContent = "Lecture : pendant la non-association (Horizon Europe 2021 à 2024, H2020 partiellement 2014 à 2016), les participants suisses ne recevaient en général ni fonds UE ni coordination. Pour situer la Suisse et les cantons, préférez les participations par habitant, et H2020 de 2017 à 2020 comme période de référence." + (S.scale === "europe" ? " La population n'est publiée par Eurostat que pour les pays européens couverts par ses statistiques régionales." : " Le Jura compte toutes les participations UE de la HES-SO, enregistrée à Delémont pour l'ensemble de ses écoles, dont la HEIG-VD.");
   }
 
   function filterSummary() {

@@ -128,6 +128,13 @@ log("CORDIS : participations vaudoises", len(vd), "| organisations", vd["organis
     "| projets", vd["projectID"].nunique())
 TYPE_EU = {"PRC": EN, "HES": HE, "REC": RI, "PUB": AU, "OTH": AU}
 
+# HES-SO : une seule entité juridique, siège à Delémont (JU), pour toutes ses écoles (HEIG-VD, ECAL, HESAV, HETSL, La Source,
+# Changins côté vaudois). CORDIS ne précise pas l'école : ces participations sont comptées au Jura, et signalées sur la page.
+hs = ch[ch["name"].str.contains(r"SPECIALISEE DE SUISSE OCCIDENTALE|\bHES-SO\b", case=False, na=False, regex=True)].merge(
+    prj[["id", "year"]], left_on="projectID", right_on="id")
+hesso = [[0 if f == "H2020" else 1, int(y), int(len(g)), round(float(g["ec"].sum()), 2), int((g["role"] == "coordinator").sum())]
+         for (f, y), g in hs.groupby(["fp", "year"])]
+log("CORDIS : participations HES-SO (siège Delémont)", len(hs), "| EUR", round(float(hs["ec"].sum()), 2))
 known_pids = set(prj["id"])
 orgs, parts = {}, []
 for _, r in vd.iterrows():
@@ -362,7 +369,7 @@ ISO_FIX = {"EL": "GR", "UK": "GB"}
 data = {"generated": pd.Timestamp.now(tz="Europe/Zurich").strftime("%Y-%m-%d"),
         "orgs": list(orgs.values()) + list(ino_orgs.values()),
         "eu_parts": parts, "eu_projects": eu_projects, "ino_projects": ino_projects,
-        "ino_fed": ino_fed, "ino_mode": ino_mode, "ino_stats": ino_stats,
+        "ino_fed": ino_fed, "ino_mode": ino_mode, "ino_stats": ino_stats, "hesso": hesso,
         "communes": communes, "cantons": cantons, "countries": countries, "bench": bench, "pop": pop, "partners_by_year": partners_by_year,
         "partner_countries": {ISO_FIX.get(k, k): v for k, v in partner_countries.items()},
         "eu_years": eu_years, "ino_years": ino_years,
