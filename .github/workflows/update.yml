@@ -3,6 +3,8 @@ name: Mise à jour de l'atlas
 on:
   schedule:
     - cron: "17 3 4 * *"        # le 4 de chaque mois à 03:17 UTC, après la publication mensuelle de CORDIS
+  push:
+    paths: ["data/state/declencheur.txt"]   # lancement à distance : modifier ce fichier
   workflow_dispatch:
     inputs:
       ordre:
@@ -69,4 +71,4 @@ jobs:
           git add data/state data/ref dist
           if git diff --cached --quiet; then echo "Aucun changement"; exit 0; fi
           git commit -m "Mise à jour mensuelle des données ($(date -u +%Y-%m-%d))"
-          git push
+          for i in 1 2 3 4 5; do git pull --rebase -q && git push && break; sleep 10; done
