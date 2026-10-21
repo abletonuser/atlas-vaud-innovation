@@ -57,6 +57,7 @@ button { font: inherit; }
 @media (max-width: 720px) { .hero-top { grid-template-columns: 1fr; } .legend-src { padding-left: 0; border-left: 0; } }
 
 .ledger { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--hero-line); }
+.ledger > div.off > .v, .ledger > div.off > .s { opacity: .32; }
 .ledger > div { position: relative; padding: 16px 18px 4px 0; display: grid; gap: 4px; align-content: start; }
 .info { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--hero-muted); background: transparent; color: var(--hero-muted); font: 700 11px/1 var(--f-body); cursor: pointer; margin-left: 6px; padding: 0; vertical-align: 1px; text-transform: none; }
 .info:hover, .info[aria-expanded="true"] { background: var(--hero-fg); color: var(--hero-bg); border-color: var(--hero-fg); }
@@ -210,7 +211,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     <section class="ledger" aria-label="Chiffres clés vaudois selon les filtres">
       <div><span class="label">Projets distincts <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v" id="k-proj">—</span><span class="s" id="k-proj-s">—</span>
         <div class="pop" role="tooltip"><b>Projets distincts</b><p>Nombre de projets différents qui comptent au moins une organisation vaudoise.</p>
-          <ul><li><b>UE</b> (H2020, Horizon Europe) : au moins un membre du consortium a son adresse dans le canton.</li><li><b>Innosuisse</b> : l'organisation de contact publiée par ARAMIS est vaudoise (voir la dernière case).</li></ul>
+          <ul><li><b>UE</b> (H2020, Horizon Europe) : au moins un membre du consortium a son adresse dans le canton.</li><li id="pp-ino"><b>Innosuisse</b> : l'organisation de contact publiée par ARAMIS est vaudoise (voir la dernière case).</li></ul>
           <p>Un projet qui réunit plusieurs organisations vaudoises compte une seule fois.</p></div></div>
       <div><span class="label">Organisations vaudoises <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v" id="k-org">—</span><span class="s" id="k-org-s">—</span>
         <div class="pop" role="tooltip"><b>Entreprises et PME</b><p>Organisations différentes ayant au moins un projet selon les filtres.</p>
@@ -750,18 +751,23 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
   }
 
   // ---------- Légende et légende de lecture ----------
-  function periodText() { return `${S.fp === "all" ? "H2020 et Horizon Europe" : S.fp}, projets lancés de ${S.y0} à ${S.y1}`; }
+  function periodText(M) {
+    const fp = S.fp === "all" ? "H2020 et Horizon Europe" : S.fp;
+    if ((M && M.ino !== undefined) || (S.scale === "vaud" && S.src === "INNO")) return `Innosuisse, projets lancés de ${Math.max(S.y0, 2018)} à ${S.y1}`;
+    if (S.scale === "vaud" && S.src === "all") return `${fp} et Innosuisse, projets lancés de ${S.y0} à ${S.y1}`;
+    return `${fp}, projets lancés de ${S.y0} à ${S.y1}`;
+  }
   function drawLegend() {
     const lg = d3.select("#legend"); lg.selectAll("*").remove();
     if (S.scale === "vaud") {
-      $("caption").innerHTML = `<b>Vaud · organisations</b>${esc(periodText())}${S.src !== "all" ? " · " + (S.src === "EU" ? "UE seulement" : "Innosuisse seulement") : ""}`;
+      $("caption").innerHTML = `<b>Vaud · organisations</b>${esc(periodText())}`;
       $("legend-text").textContent = "Taille : nombre de projets. Bleu : UE, rouge : Innosuisse. Zoom : boutons, Ctrl + molette ou deux doigts.";
       const sizes = [10, 100, maxN]; let x = 10;
       sizes.forEach((n) => { const r = rScale(n) * 0.45; lg.append("circle").attr("cx", x + r).attr("cy", 14).attr("r", r).attr("fill", "none").attr("stroke", "var(--muted)"); lg.append("text").attr("x", x + 2 * r + 3).attr("y", 18).text(fInt(n)); x += 2 * r + 40; });
       return;
     }
     const M = IND[S.ind[S.scale]];
-    $("caption").innerHTML = `<b>${S.scale === "europe" ? "Europe" : "Suisse"} · ${esc(M.label.charAt(0).toLowerCase() + M.label.slice(1))}</b>${esc(periodText())}`;
+    $("caption").innerHTML = `<b>${S.scale === "europe" ? "Europe" : "Suisse"} · ${esc(M.label.charAt(0).toLowerCase() + M.label.slice(1))}</b>${esc(periodText(M))}`;
     const hint = S.scale === "europe" ? " Cliquez la Suisse pour ses cantons." : " Cliquez deux fois Vaud pour ses organisations.";
     $("legend-text").textContent = (M.pct ? `Calculé au-delà de ${fInt(MIN[S.scale])} participations ; en gris, non calculé.` : M.pc ? "Population Eurostat ; en gris, population non publiée." : "En gris : aucune participation selon les filtres.") + hint;
     if (!legendInfo) return;
@@ -874,7 +880,9 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     set("k-org", fInt(aggs.length));
     const comp = aggs.filter((a) => a.e.type === "Entreprise");
     const nSme = comp.filter((a) => a.e.sme).length;
-    set("k-org-s", `dont ${plural(comp.length, "entreprise", "entreprises")}, parmi lesquelles ${fInt(nSme)} PME`); set("p-sme", fInt(nSme)); set("p-co", fInt(comp.length));
+    set("k-org-s", `dont ${plural(comp.length, "entreprise", "entreprises")}` + (S.src === "INNO" ? "" : `, parmi lesquelles ${fInt(nSme)} PME`));
+    const dim = (id, on) => $(id).parentElement.classList.toggle("off", on);
+    dim("k-ec", S.src === "INNO"); dim("k-assoc", S.src === "INNO"); dim("k-chf", S.src === "EU"); set("p-sme", fInt(nSme)); set("p-co", fInt(comp.length));
     const money = (id, v, cur) => { const big = v >= 1e6; $(id).innerHTML = `${big ? f1(v / 1e6) : fInt(Math.round(v))}<small>${big ? "mio " : ""}${cur}</small>`; };
     money("k-ec", d3.sum(eu, (d) => d.ec), "EUR"); set("k-ec-s", `sur ${plural(eu.filter((d) => d.ec > 0).length, "participation", "participations")} avec montant`);
     const zero = eu.filter((d) => d.ec <= 0);
@@ -975,6 +983,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     const st = D.ino_stats;
     $("gapnote").innerHTML = `<b>Couverture Innosuisse.</b> ${fInt(st.projets)} projets lancés depuis 2018, avec tous leurs partenaires. Entreprises : ${fInt(st.entreprises_localisees)} sur ${fInt(st.entreprises)} situées par leur siège au registre du commerce (numéro IDE). Partenaires de recherche : ${fInt(st.recherche_localisee)} sur ${fInt(st.recherche)} situés par leur nom.`;
     $("ino-cover").textContent = "ARAMIS publie pour chaque projet ses partenaires : institution de recherche (contact et direction scientifique) et entreprises partenaires, avec leur numéro IDE. Le siège des entreprises vient du registre du commerce (Zefix, données ouvertes LINDAS). Un projet compte pour un canton dès qu'un de ses partenaires y est établi ; il peut donc compter pour plusieurs cantons.";
+    $("pp-ino").innerHTML = "<b>Innosuisse</b> : au moins un partenaire du projet (entreprise ou institution de recherche) est établi dans le canton.";
     $("ino-cover2").textContent = "Le montant reste le coût total approuvé du projet, sans ventilation entre partenaires.";
     $("pop-ino").innerHTML = "<b>Projets Innosuisse comptés</b><p>Projets lancés depuis 2018 dont <b>au moins un partenaire est vaudois</b> : entreprise dont le siège est dans le canton (registre du commerce), ou institution de recherche vaudoise.</p><p><b>Où va l'argent ?</b> Dans un projet d'innovation classique, la subvention va au partenaire de recherche ; l'entreprise paie de 40 à 60 % des coûts et profite des résultats. Les start-up reçoivent l'argent directement dans les projets d'innovation de start-up (jusqu'à 70 % des coûts directs).</p><p>Montant : coût total approuvé du projet, compté une fois même avec plusieurs partenaires vaudois.</p>";
   } else
