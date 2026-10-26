@@ -191,6 +191,15 @@ def bench_rows(df, key):
     return [[k if isinstance(k, str) else int(k), int(f), int(y), int(t), int(r.n), int(r.coord), int(r.funded), round(float(r.ec)), int(r.sme)]
             for (k, f, y, t), r in g.iterrows()]
 bench = {"country": bench_rows(org2, "cty"), "canton": bench_rows(org2[org2["cty"] == "CH"], "cant")}
+# Projets distincts par territoire : un projet compte une fois, quel que soit le nombre de ses participants du territoire.
+# Le masque note les types d'organisation présents (bit t), pour respecter le filtre « types » de la page sans double compte.
+def proj_rows(df, key):
+    g = df.dropna(subset=[key, "year"]).groupby([key, "projectID"]).agg(fpi=("fpi", "first"), year=("year", "first"),
+                                                                       mask=("t", lambda s: int(sum(1 << t for t in set(s)))))
+    c = g.groupby([key, "fpi", "year", "mask"]).size()
+    return [[k if isinstance(k, str) else int(k), int(f), int(y), int(m), int(n)] for (k, f, y, m), n in c.items()]
+bench["country_proj"] = proj_rows(org2, "cty"); bench["canton_proj"] = proj_rows(org2[org2["cty"] == "CH"], "cant")
+log("Comparaisons : lignes projets pays", len(bench["country_proj"]), "| cantons", len(bench["canton_proj"]))
 oth = others.merge(prj[["id", "year"]], left_on="projectID", right_on="id", how="inner")
 oth["fpi"] = (oth["fp"] == "Horizon Europe").astype(int)
 oth["cty"] = oth["country"].replace({"EL": "GR", "UK": "GB"})

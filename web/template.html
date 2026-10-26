@@ -153,7 +153,11 @@ select, input[type="search"] { font: inherit; font-size: .92rem; color: var(--fg
 .src-mark { display: inline-block; font-family: var(--f-display); font-stretch: 80%; font-weight: 700; font-size: .7rem; letter-spacing: .05em; padding: 0 5px; border-radius: 2px; margin-right: 6px; vertical-align: 1px; }
 .src-mark.eu { background: var(--eu-soft); color: var(--eu); } .src-mark.ino { background: var(--ino-soft); color: var(--ino); }
 .kv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; font-size: .9rem; }
-.kv dt { color: var(--muted); } .kv dd { margin: 0; text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.kv dt { color: var(--muted); }
+.kv dt.sec { grid-column: 1; color: var(--fg); font-family: var(--f-display); font-stretch: 85%; font-weight: 700; margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--line); }
+.kv dt.sec + dd { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--line); }
+.kv dt.sec:not(:has(+ dd)) { grid-column: 1 / -1; }
+.def { font-size: .8rem; line-height: 1.4; } .kv dd { margin: 0; text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; }
 
 .plates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 @media (max-width: 920px) { .plates { grid-template-columns: 1fr; } }
@@ -403,7 +407,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
 
   const TYPES = ["Entreprise", "Haute école", "Hôpital et santé", "Institut de recherche", "Autre"];
   const allYears = d3.extent([...items.map((d) => d.y), ...D.bench.country.map((r) => r[2])]);
-  const S = { scale: "vaud", fp: "all", src: "all", types: new Set(TYPES), y0: allYears[0], y1: allYears[1], dom: "", prog: "", sel: null, geoSel: null, ind: { europe: "n_pc", suisse: "n_pc" } };
+  const S = { scale: "vaud", fp: "all", src: "all", types: new Set(TYPES), y0: allYears[0], y1: allYears[1], dom: "", prog: "", sel: null, geoSel: null, ind: { europe: "proj_pc", suisse: "proj_pc" } };
 
   // ---------- Filtres ----------
   const typeBox = $("types");
@@ -470,8 +474,14 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     for (const [k, fpi, y, t, n, coord, funded, ec, sme] of D.bench[level]) {
       if (S.fp !== "all" && FPI[S.fp] !== fpi) continue;
       if (y < S.y0 || y > S.y1 || !S.types.has(TYPES[t])) continue;
-      let a = out.get(String(k)); if (!a) { a = { n: 0, coord: 0, funded: 0, ec: 0, sme: 0, prc: 0 }; out.set(String(k), a); }
+      let a = out.get(String(k)); if (!a) { a = { n: 0, coord: 0, funded: 0, ec: 0, sme: 0, prc: 0, proj: 0 }; out.set(String(k), a); }
       a.n += n; a.coord += coord; a.funded += funded; a.ec += ec; a.sme += sme; if (t === 0) a.prc += n;
+    }
+    // projets distincts : un projet compte une fois s'il compte au moins un participant d'un type retenu
+    const selMask = TYPES.reduce((m, t, i) => (S.types.has(t) ? m | (1 << i) : m), 0);
+    for (const [k, fpi, y, mask, np] of D.bench[level + "_proj"] || []) {
+      if ((S.fp !== "all" && FPI[S.fp] !== fpi) || y < S.y0 || y > S.y1 || !(mask & selMask)) continue;
+      const a = out.get(String(k)); if (a) a.proj += np;
     }
     return out;
   }
@@ -486,14 +496,16 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
   }
   const MIN = { europe: 300, suisse: 30 };
   const IND = {
-    n: { label: "Participations (une par organisation et par projet)", f: fInt, v: (a) => a.n },
-    n_pc: { label: "Participations pour 100 000 habitants", f: f1, pc: true, v: (a, pop) => (pop ? (a.n / pop) * 1e5 : null) },
-    coord: { label: "Coordinations", f: fInt, v: (a) => a.coord },
-    pcoord: { label: "Part des coordinations", f: (v) => f1(v) + " %", pct: true, v: (a) => (a.n ? (100 * a.coord) / a.n : null) },
-    pprc: { label: "Part des entreprises", f: (v) => f1(v) + " %", pct: true, v: (a) => (a.n ? (100 * a.prc) / a.n : null) },
-    ec: { label: "Montant UE", f: eur, v: (a) => a.ec },
-    ec_pc: { label: "Montant UE par habitant", f: (v) => f1(v) + " EUR", pc: true, v: (a, pop) => (pop ? a.ec / pop : null) },
-    partners: { label: "Partenaires de projets vaudois", f: fInt, only: "europe", v: (a) => a.partners },
+    proj: { label: "UE : projets avec au moins un participant", f: fInt, v: (a) => a.proj },
+    proj_pc: { label: "UE : projets pour 100 000 habitants", f: f1, pc: true, v: (a, pop) => (pop ? (a.proj / pop) * 1e5 : null) },
+    n: { label: "UE : participations (organisations membres d'un projet)", f: fInt, v: (a) => a.n },
+    n_pc: { label: "UE : participations pour 100 000 habitants", f: f1, pc: true, v: (a, pop) => (pop ? (a.n / pop) * 1e5 : null) },
+    coord: { label: "UE : projets coordonnés", f: fInt, v: (a) => a.coord },
+    pcoord: { label: "UE : part des projets coordonnés", f: (v) => f1(v) + " %", pct: true, v: (a) => (a.proj ? (100 * a.coord) / a.proj : null) },
+    pprc: { label: "UE : part des participations d'entreprises", f: (v) => f1(v) + " %", pct: true, v: (a) => (a.n ? (100 * a.prc) / a.n : null) },
+    ec: { label: "UE : montant attribué", f: eur, v: (a) => a.ec },
+    ec_pc: { label: "UE : montant attribué par habitant", f: (v) => f1(v) + " EUR", pc: true, v: (a, pop) => (pop ? a.ec / pop : null) },
+    partners: { label: "UE : participations à des projets avec Vaud", f: fInt, only: "europe", v: (a) => a.partners },
   };
   if (D.ino_fed) Object.assign(IND, {
     ino_all: { label: "Innosuisse : projets avec au moins un partenaire du canton", f: fInt, only: "suisse", ino: 2, v: (a) => a.n },
@@ -520,10 +532,10 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       const ks = Object.entries(IND).filter(([, m]) => (m.ino != null) === isIno && indOk(m));
       if (!ks.length) continue;
       const g = document.createElement("optgroup"); g.label = lab;
-      for (const [k, m] of ks) g.appendChild(new Option(m.label.replace(/^Innosuisse : /, ""), k));
+      for (const [k, m] of ks) g.appendChild(new Option(m.label.replace(/^(Innosuisse|UE) : /, ""), k));
       indSel.appendChild(g);
     }
-    if (!IND[S.ind[S.scale]] || !indOk(IND[S.ind[S.scale]])) S.ind[S.scale] = S.scale === "suisse" && S.src === "INNO" && D.ino_fed ? "ino_all_pc" : "n_pc";
+    if (!IND[S.ind[S.scale]] || !indOk(IND[S.ind[S.scale]])) S.ind[S.scale] = S.scale === "suisse" && S.src === "INNO" && D.ino_fed ? "ino_all_pc" : "proj_pc";
     indSel.value = S.ind[S.scale];
   }
   indSel.addEventListener("change", () => { S.ind[S.scale] = indSel.value; render(); });
@@ -545,7 +557,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       return out;
     }
     const agg = benchAgg(scale === "europe" ? "country" : "canton");
-    if (scale === "europe") { const pa = partnersAgg(); for (const [k, n] of pa) { if (!agg.has(k)) agg.set(k, { n: 0, coord: 0, funded: 0, ec: 0, sme: 0, prc: 0 }); agg.get(k).partners = n; } }
+    if (scale === "europe") { const pa = partnersAgg(); for (const [k, n] of pa) { if (!agg.has(k)) agg.set(k, { n: 0, coord: 0, funded: 0, ec: 0, sme: 0, prc: 0, proj: 0 }); agg.get(k).partners = n; } }
     const out = new Map();
     for (const [k, a] of agg) {
       if (a.partners == null) a.partners = 0;
@@ -701,13 +713,14 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       selOutline.attr("d", selF ? path(selF) : null);
     }
   }
+  const defNote = (sc) => `<p class="muted def">Projet : compté une fois s'il réunit au moins une organisation ${sc === "europe" ? "du pays" : "du canton"}. Participation : une organisation membre d'un projet. Un projet avec trois organisations ${sc === "europe" ? "du pays" : "du canton"} compte 1 projet et 3 participations. Montant : contribution de l'UE attribuée à ces organisations.</p>`;
   function geoTip(k, d, sc) {
     const nm = sc === "europe" ? ctryName(k) : CANTONS[k];
     if (!d) return `<b>${esc(nm)}</b><br>Aucune participation selon les filtres`;
     const M = IND[S.ind[sc]];
     let h = `<b>${esc(nm)}</b><br>${esc(M.label)} : ${d.v != null ? M.f(d.v) : "non calculé (" + d.why + ")"}`;
     if (d.ino) return h + `<br>${plural(d.a.n, "projet", "projets")} ; coûts attribués au canton : ${chf((inoAgg(2).get(d.k) || { chf: 0 }).chf)}`;
-    h += `<br>${plural(d.a.n, "participation", "participations")}, ${fInt(d.a.coord)} coordinations`;
+    h += `<br>${plural(d.a.proj, "projet", "projets")}, ${plural(d.a.n, "participation", "participations")}, montant UE ${eur(d.a.ec)}`;
     if (sc === "europe" && d.a.partners) h += `<br>${fInt(d.a.partners)} co-participations avec Vaud`;
     return h;
   }
@@ -791,7 +804,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       return;
     }
     const M = IND[S.ind[S.scale]];
-    $("caption").innerHTML = `<b>${S.scale === "europe" ? "Europe" : "Suisse"} · ${esc(M.ino != null ? M.label : M.label.charAt(0).toLowerCase() + M.label.slice(1))}</b>${esc(periodText(M))}`;
+    $("caption").innerHTML = `<b>${S.scale === "europe" ? "Europe" : "Suisse"} · ${esc(M.label)}</b>${esc(periodText(M))}`;
     const hint = S.scale === "europe" ? " Cliquez la Suisse pour ses cantons." : " Cliquez deux fois Vaud pour ses organisations.";
     $("legend-text").textContent = (M.pct ? `Calculé au-delà de ${fInt(MIN[S.scale])} participations ; en gris, non calculé.` : M.pc ? "Population Eurostat ; en gris, population non publiée." : "En gris : aucune participation selon les filtres.") + hint;
     if (!legendInfo) return;
@@ -814,24 +827,28 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     const hiKey = sc === "europe" ? "CH" : "22"; const nm = (k) => (sc === "europe" ? ctryName(k) : CANTONS[k]);
     if (S.geoSel && vals.get(S.geoSel)) {
       let d = vals.get(S.geoSel);
-      if (d.ino) { const ea = benchAgg("canton").get(S.geoSel) || { n: 0, coord: 0, funded: 0, ec: 0, sme: 0, prc: 0 }; d = { ...d, a: { ...ea, partners: 0 } }; }
+      if (d.ino) { const ea = benchAgg("canton").get(S.geoSel) || { n: 0, coord: 0, funded: 0, ec: 0, sme: 0, prc: 0, proj: 0 }; d = { ...d, a: { ...ea, partners: 0 } }; }
       panel.insertAdjacentHTML("beforeend", `<button type="button" class="back" id="back">← Retour au classement</button>
         <div class="fiche-head"><h3>${esc(nm(S.geoSel))}</h3><div class="tags"><span class="tag">${esc(periodText())}</span></div></div>
         <dl class="kv">
-          ${(() => { const eu = `<dt>Participations (une par organisation et par projet)</dt><dd>${fInt(d.a.n)}</dd>
-          <dt>pour 100 000 habitants</dt><dd>${d.pop ? f1((d.a.n / d.pop) * 1e5) : "—"}</dd>
-          <dt>Coordinations</dt><dd>${fInt(d.a.coord)}${d.a.n ? " (" + f1((100 * d.a.coord) / d.a.n) + " %)" : ""}</dd>
+          ${(() => { const T = sc === "europe" ? "du pays" : "du canton", pc = (v) => (d.pop ? f1((v / d.pop) * 1e5) : "—");
+            const eu = `<dt class="sec">Programmes-cadres UE</dt>
+          <dt>Projets avec au moins un participant ${T}</dt><dd>${fInt(d.a.proj)}</dd>
+          <dt>pour 100 000 habitants</dt><dd>${pc(d.a.proj)}</dd>
+          <dt>Participations (organisations ${T} membres de ces projets)</dt><dd>${fInt(d.a.n)}</dd>
+          <dt>pour 100 000 habitants</dt><dd>${pc(d.a.n)}</dd>
+          <dt>Projets coordonnés</dt><dd>${fInt(d.a.coord)}${d.a.proj ? " (" + f1((100 * d.a.coord) / d.a.proj) + " % des projets)" : ""}</dd>
           <dt>Participations d'entreprises</dt><dd>${fInt(d.a.prc)}${d.a.n ? " (" + f1((100 * d.a.prc) / d.a.n) + " %)" : ""}</dd>
-          <dt>Participations avec montant UE</dt><dd>${fInt(d.a.funded)}</dd>
-          <dt>Montant UE</dt><dd>${eur(d.a.ec)}</dd>
+          <dt>Montant UE attribué</dt><dd>${eur(d.a.ec)}</dd>
           <dt>par habitant</dt><dd>${d.pop ? f1(d.a.ec / d.pop) + " EUR" : "—"}</dd>
-          ${sc === "europe" ? `<dt>Co-participations avec Vaud</dt><dd>${fInt(d.a.partners || 0)}</dd>` : ""}`;
+          <dt>Participations avec un montant UE</dt><dd>${fInt(d.a.funded)} sur ${fInt(d.a.n)}</dd>
+          ${sc === "europe" ? `<dt>Participations à des projets avec Vaud</dt><dd>${fInt(d.a.partners || 0)}</dd>` : ""}`;
             let ino = "";
             if (sc === "suisse" && D.ino_fed) { const z = { n: 0, chf: 0 }, t = inoAgg(2).get(S.geoSel) || z, b = inoAgg(0).get(S.geoSel) || z, r = inoAgg(1).get(S.geoSel) || z;
-              ino = `<dt>Innosuisse, projets avec au moins un partenaire du canton</dt><dd>${fInt(t.n)}</dd><dt>avec une entreprise du canton</dt><dd>${fInt(b.n)}</dd><dt>avec un partenaire de recherche du canton</dt><dd>${fInt(r.n)}</dd><dt>Innosuisse, coûts attribués au canton</dt><dd>${chf(t.chf)}</dd><dt>par habitant</dt><dd>${d.pop ? f0(t.chf / d.pop) + " CHF" : "—"}</dd>`; }
+              ino = `<dt class="sec">Innosuisse, projets lancés depuis 2018</dt><dt>Projets avec au moins un partenaire du canton</dt><dd>${fInt(t.n)}</dd><dt>pour 100 000 habitants</dt><dd>${pc(t.n)}</dd><dt>dont avec une entreprise du canton</dt><dd>${fInt(b.n)}</dd><dt>dont avec un partenaire de recherche du canton</dt><dd>${fInt(r.n)}</dd><dt>Coûts attribués au canton (part de ses partenaires)</dt><dd>${chf(t.chf)}</dd><dt>par habitant</dt><dd>${d.pop ? f0(t.chf / d.pop) + " CHF" : "—"}</dd>`; }
             return S.src === "INNO" && ino ? ino : S.src === "EU" ? eu : M.ino != null ? ino + eu : eu + ino; })()}
-          <dt>Population (Eurostat)</dt><dd>${d.pop ? fInt(d.pop) : "non publiée"}</dd>
-        </dl>`);
+          <dt class="sec">Population (Eurostat)</dt><dd>${d.pop ? fInt(d.pop) : "non publiée"}</dd>
+        </dl>${S.src !== "INNO" ? defNote(sc) : ""}`);
       $("back").onclick = () => { S.geoSel = null; render(); };
       if (S.geoSel === hiKey) {
         const b = document.createElement("button"); b.type = "button"; b.className = "cta"; b.textContent = sc === "europe" ? "Voir les cantons suisses" : "Voir les organisations vaudoises";
@@ -854,6 +871,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       b.onclick = () => { S.geoSel = d.k; render(); }; li.appendChild(b); ul.appendChild(li);
     }
     panel.appendChild(ul);
+    if (M.ino == null) panel.insertAdjacentHTML("beforeend", defNote(sc));
   }
   function orgPanel(aggs) {
     const sel = S.sel ? aggs.find((a) => a.e.key === S.sel) : null;
