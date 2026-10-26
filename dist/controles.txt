@@ -5,22 +5,22 @@ CORDIS : participations vaudoises 1594 | organisations 245 | projets 1424
 CORDIS : participations HES-SO (siège Delémont) 92 | EUR 17034389.37
 CORDIS : organisations sans commune vaudoise []
 CORDIS : catégories {'Haute école': 3, 'Hôpital et santé': 2, 'Autre': 27, 'Entreprise': 205, 'Institut de recherche': 7}
-CORDIS : pays partenaires 103 | top [('DE', 2346), ('FR', 2026), ('IT', 1777), ('ES', 1727), ('UK', 1444), ('NL', 1260)]
+CORDIS : pays partenaires 104 | top [('DE', 2346), ('FR', 2026), ('IT', 1777), ('ES', 1727), ('UK', 1444), ('NL', 1260)]
 CORDIS : pays participants 201 | rang de la Suisse (participations) 11
-Comparaisons : lignes pays 5055 | lignes cantons 704
+Comparaisons : lignes pays 5071 | lignes cantons 704
 Population : pays 37 | cantons 26 | années {2025: 70, 2019: 1} | CH 9051029 | VD 855106
-ARAMIS : projets Innosuisse 2018+ 8059 | NPA lu 3953 | organisation lue 7805
-ARAMIS : projets avec contact vaudois 449 | par adresse 323 | par nom d'institution (siège) 126 | CHF 106105096.99
-ARAMIS : entreprises vaudoises retrouvées par leur nom dans CORDIS 40 | projets 57 | CHF 23728739.28
-ARAMIS : projets dont le contact est une entreprise sans adresse 2067 | CHF 478378621
+ARAMIS : projets Innosuisse 2018+ 8193 | NPA lu 3953 | organisation lue 7857
+ARAMIS : projets avec contact vaudois 453 | par adresse 323 | par nom d'institution (siège) 130 | CHF 107147999.09
+ARAMIS : entreprises vaudoises retrouvées par leur nom dans CORDIS 41 | projets 59 | CHF 24965056.88
+ARAMIS : projets dont le contact est une entreprise sans adresse 2071 | CHF 460688291
 ARAMIS : organisations vaudoises 16 | sans commune []
-ARAMIS : organisations [(195, 'HEIG-VD', 'Haute école'), (182, 'EPFL', 'Haute école'), (18, 'Université de Lausanne', 'Haute école'), (18, 'CHUV', 'Hôpital et santé'), (7, 'HETSL', 'Haute école'), (6, 'EHL', 'Haute école'), (5, 'Changins', 'Haute école'), (4, 'HEdS La Source', 'Haute école'), (3, 'Unisanté', 'Hôpital et santé'), (3, 'HESAV', 'Haute école'), (2, 'SIB Institut suisse de bioinformatique', 'Institut de recherche'), (2, 'ECAL', 'Haute école'), (1, 'Universität Bern', 'Haute école'), (1, 'IMD', 'Haute école'), (1, 'Fondation Asile des aveugles', 'Autre'), (1, 'Agroscope', 'Institut de recherche')]
-Innosuisse : participants collectés pour 99.8% des projets 2018+
-Innosuisse participants : {'projets': 8031, 'entreprises': 6525, 'entreprises_localisees': 6237, 'recherche': 1066, 'recherche_localisee': 914}
-Innosuisse : institutions de recherche sans canton (top) [('Universität Liechtenstein', 4), ('University of Liechtenstein', 2), ('Hoval Aktiengesellschaft CHE-491.026.449', 2), ('Tournesol', 1), ('eScooterLab', 1), ('Verein für eine faire soziale Infrastruktur', 1), ('LS instruments', 1), ('Schweizerischen Gesellschaft für Laufbahn- und Personalpsychologie (S GLP)', 1), ('EcoVroom', 1), ('Dachverband für offene Arbeit mit Kindern in der Stadt Bern', 1), ('Helvetia Solux ? Verein für Ethik, KI & Innovation', 1), ('Safespace Research AG', 1)]
-Innosuisse : coûts attribués aux cantons 1,725,581,875 sur 1,760,753,369 CHF (98.0%) ; reste : partenaires étrangers ou non localisés
-Innosuisse VD : projets 1133 | organisations 724 | entreprises 583
-CONTRÔLE : Innosuisse VD (participants) 1133 projets | CHF 324007660.18 | projets sans organisation positionnée 2
+ARAMIS : organisations [(198, 'HEIG-VD', 'Haute école'), (183, 'EPFL', 'Haute école'), (18, 'Université de Lausanne', 'Haute école'), (18, 'CHUV', 'Hôpital et santé'), (7, 'HETSL', 'Haute école'), (6, 'EHL', 'Haute école'), (5, 'Changins', 'Haute école'), (4, 'HEdS La Source', 'Haute école'), (3, 'Unisanté', 'Hôpital et santé'), (3, 'HESAV', 'Haute école'), (2, 'SIB Institut suisse de bioinformatique', 'Institut de recherche'), (2, 'ECAL', 'Haute école'), (1, 'Universität Bern', 'Haute école'), (1, 'IMD', 'Haute école'), (1, 'Fondation Asile des aveugles', 'Autre'), (1, 'Agroscope', 'Institut de recherche')]
+Innosuisse : participants collectés pour 99.9% des projets 2018+
+Innosuisse participants : {'projets': 8098, 'entreprises': 6540, 'entreprises_localisees': 6187, 'recherche': 455, 'recherche_localisee': 436}
+Innosuisse : institutions de recherche sans canton (top) [('Universität Liechtenstein', 4), ('University of Liechtenstein', 2), ('Universitäts-Kinderspital Zürich', 1), ('IVI - Institut für Virologie und Immunologie', 1), ('HEdS-VS - Haute école de santé', 1), ('Felix Platter-Spital', 1), ("IT'IS - Foundation for Research on Information Technologies in Society", 1), ('HfH - Interkantonale Hochschule für Heilpädagogik Zürich', 1), ('PH-SH - Pädagogische Hochschule Schaffhausen', 1), ('Theologische Hochschule Chur', 1), ('ARI - AO Research Institute Davos', 1), ('HEdS-FR - Haute école de santé', 1)]
+Innosuisse : coûts attribués aux cantons 1,739,055,027 sur 1,774,056,000 CHF (98.0%) ; reste : partenaires étrangers ou non localisés
+Innosuisse VD : projets 1143 | organisations 668 | entreprises 577
+CONTRÔLE : Innosuisse VD (participants) 1143 projets | CHF 325027601.03 | projets sans organisation positionnée 1
 CONTRÔLE : UE vers VD 720647671.89 = source 720647671.89
 CONTRÔLE : rôles VD {'participant': 617, 'coordinator': 466, 'associatedPartner': 458, 'thirdParty': 23, 'partner': 30}
 CONTRÔLE : participations VD sans projet connu 0
