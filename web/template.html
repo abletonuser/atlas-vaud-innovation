@@ -1,4 +1,4 @@
-<title>Atlas vaudois de l'innovation</title>
+<title>Atlas vaudois des projets financés</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@ button { font: inherit; }
 .hero-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px 40px; align-items: end; }
 .eyebrow { font-family: var(--f-display); font-stretch: 80%; font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--hero-muted); }
 .hero h1 { font-size: clamp(2.5rem, 7.2vw, 5.4rem); font-weight: 800; font-stretch: 64%; line-height: .9; letter-spacing: -.012em; margin-top: 10px; }
-.hero h1 em { font-style: normal; color: var(--hero-muted); font-weight: 600; }
+.hero h1 em { font-style: normal; color: var(--hero-muted); font-weight: 600; display: block; font-size: .58em; line-height: 1.05; margin-top: .12em; }
 .hero .lede { margin-top: 14px; max-width: 58ch; color: var(--hero-muted); font-size: 1.02rem; }
 .legend-src { display: grid; gap: 7px; font-size: .88rem; color: var(--hero-fg); padding-left: 18px; border-left: 1px solid var(--hero-line); }
 .legend-src .muted { color: var(--hero-muted); }
@@ -181,6 +181,13 @@ select, input[type="search"] { font: inherit; font-size: .92rem; color: var(--fg
 #hatchY .hb { fill: var(--nodata); } #hatchY .hl2 { stroke: var(--line-strong); stroke-width: 1.2; }
 .keyrow .hatch .sw { background: repeating-linear-gradient(45deg, var(--line-strong) 0 1.2px, var(--nodata) 1.2px 4px); outline: 1px solid var(--line-strong); }
 
+.scope { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px 22px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 14px 18px; font-size: .88rem; }
+.scope-head p { margin-top: 4px; }
+.scope ul { margin: 4px 0 0; padding-left: 1.1em; display: grid; gap: 4px; }
+.scope-t { font-family: var(--f-display); font-stretch: 85%; font-weight: 800; font-size: .95rem; }
+.scope-col.in .scope-t { color: var(--accent); } .scope-col.out .scope-t { color: var(--muted); }
+.scope-col.out li { color: var(--muted); }
+@media (max-width: 900px) { .scope { grid-template-columns: 1fr; } }
 .filterbox { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; }
 .filterbox > summary { cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; list-style: none; }
 .filterbox > summary::-webkit-details-marker { display: none; }
@@ -205,9 +212,9 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
   <div class="hero-inner">
     <div class="hero-top">
       <div>
-        <div class="eyebrow">Canton de Vaud · Innovation financée par la Confédération et l'Union européenne</div>
-        <h1>Atlas vaudois<br><em>de l'innovation</em></h1>
-        <p class="lede">Une carte, trois échelles : les organisations vaudoises, Vaud parmi les cantons, la Suisse parmi les pays d'Europe. Construit uniquement sur des données publiques.</p>
+        <div class="eyebrow">Canton de Vaud · Deux sources de financement public : programmes-cadres de l'UE et Innosuisse</div>
+        <h1>Atlas vaudois<br><em>des projets UE et Innosuisse</em></h1>
+        <p class="lede">Les projets de recherche et d'innovation financés par l'Union européenne (H2020, Horizon Europe) et par Innosuisse qui associent des organisations vaudoises. Une carte, trois échelles : les organisations vaudoises, Vaud parmi les cantons, la Suisse parmi les pays d'Europe. Données publiques uniquement.</p>
       </div>
       <div class="legend-src" aria-label="Sources">
         <span><i class="dot eu"></i>Programmes-cadres UE · H2020 et Horizon Europe</span>
@@ -216,11 +223,11 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       </div>
     </div>
     <section class="ledger" aria-label="Chiffres clés vaudois selon les filtres">
-      <div><span class="label">Projets distincts <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v" id="k-proj">—</span><span class="s" id="k-proj-s">—</span>
+      <div><span class="label">Projets UE ou Innosuisse <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v" id="k-proj">—</span><span class="s" id="k-proj-s">—</span>
         <div class="pop" role="tooltip"><b>Projets distincts</b><p>Nombre de projets différents qui comptent au moins une organisation vaudoise.</p>
           <ul><li><b>UE</b> (H2020, Horizon Europe) : au moins un membre du consortium a son adresse dans le canton.</li><li id="pp-ino"><b>Innosuisse</b> : l'organisation de contact publiée par ARAMIS est vaudoise (voir la dernière case).</li></ul>
           <p>Un projet qui réunit plusieurs organisations vaudoises compte une seule fois.</p></div></div>
-      <div><span class="label">Organisations vaudoises <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v" id="k-org">—</span><span class="s" id="k-org-s">—</span>
+      <div><span class="label">Organisations vaudoises financées <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v" id="k-org">—</span><span class="s" id="k-org-s">—</span>
         <div class="pop" role="tooltip"><b>Entreprises et PME</b><p>Organisations différentes ayant au moins un projet selon les filtres.</p>
           <ul><li><b>Entreprise</b> : organisation à but lucratif (catégorie « privé commercial » de CORDIS, ou raison sociale SA, Sàrl, AG… dans ARAMIS).</li>
           <li><b>PME</b> : entreprise enregistrée comme PME auprès de la Commission européenne, selon la définition UE : moins de 250 personnes, et chiffre d'affaires jusqu'à 50 mio EUR ou bilan jusqu'à 43 mio EUR.</li></ul>
@@ -241,6 +248,17 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
 </header>
 
 <div class="wrap">
+  <section class="scope" aria-label="Périmètre de l'atlas">
+    <div class="scope-head"><span class="label">Périmètre</span><p><b>Cet atlas ne mesure pas toute l'innovation vaudoise.</b> Il montre seulement les projets financés par deux sources publiques. Un canton, une entreprise ou une région absents ici peuvent innover beaucoup par d'autres voies.</p></div>
+    <div class="scope-col in"><span class="scope-t">Inclus</span><ul>
+      <li><b>Programmes-cadres de l'UE</b> : H2020 (2014 à 2020) et Horizon Europe (depuis 2021), y compris ERC, Marie Skłodowska-Curie et EIC. Source CORDIS.</li>
+      <li><b>Innosuisse</b> : projets lancés depuis 2018 (projets d'innovation, chèques, projets internationaux, Flagships), avec tous leurs partenaires. Source ARAMIS.</li></ul></div>
+    <div class="scope-col out"><span class="scope-t">Non inclus</span><ul>
+      <li>La R&amp;D financée par les entreprises elles-mêmes, de loin la plus importante.</li>
+      <li>Le Fonds national suisse, les aides cantonales (LADE, FIT), le capital-risque, les prêts et les garanties.</li>
+      <li>Les autres programmes : Agence spatiale européenne, Digital Europe, Interreg, programmes de l'armée ou d'autres offices fédéraux.</li>
+      <li>Les montants versés par la Confédération (SEFRI) à la place de l'UE pendant la non-association (2021 à 2024), ainsi que les brevets, les créations d'entreprises et l'emploi.</li></ul></div>
+  </section>
   <details class="filterbox" id="filterbox" open>
   <summary><span class="label">Filtres</span><span class="fsum" id="fsum">—</span></summary>
   <section class="filters" aria-label="Filtres">
@@ -347,7 +365,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     </div>
   </details>
   </section>
-  <footer><span><b>Atlas vaudois de l'innovation</b> · données publiques CORDIS, ARAMIS et Eurostat</span><span id="foot-next">À venir : entreprises partenaires des projets Innosuisse et vue fédérale par canton.</span></footer>
+  <footer><span><b>Atlas vaudois des projets UE et Innosuisse</b> · périmètre limité aux programmes-cadres de l'UE et à Innosuisse · données publiques CORDIS, ARAMIS et Eurostat</span><span id="foot-next">À venir : entreprises partenaires des projets Innosuisse et vue fédérale par canton.</span></footer>
 </div>
 
 <script id="data" type="application/json">__DATA__</script>
