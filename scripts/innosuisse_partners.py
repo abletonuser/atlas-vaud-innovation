@@ -16,6 +16,8 @@ CANTON_ID = {"ZH": 1, "BE": 2, "LU": 3, "UR": 4, "SZ": 5, "OW": 6, "NW": 7, "GL"
              "BL": 13, "SH": 14, "AR": 15, "AI": 16, "SG": 17, "GR": 18, "AG": 19, "TG": 20, "TI": 21, "VD": 22, "VS": 23,
              "NE": 24, "GE": 25, "JU": 26}
 BUSINESS_ROLE = re.compile(r"(partenaire commercial|wirtschaftspartner|umsetzungspartner|partenaire de mise en|implementation partner|business partner)", re.I)
+RESEARCH_NAME = r"universit|hochschule|haute [ée]cole|[ée]cole|school|institut|spital|h[ôo]pital|clinique|klinik|insel gruppe|innovation park|rhysearch|m4m center|forschung|laborator|fondation|stiftung|foundation|verein|association|\bcentre\b|\bcenter\b|zentrum"
+NOT_COMPANY = r"\b(association|verein|fondation|stiftung|foundation|commune|gemeinde|ville de|stadt |canton|kanton|universit|hochschule|haute [ée]cole|[ée]cole|spital|h[ôo]pital|clinique|chuv|institut)\b"
 COMPANY_FORM = re.compile(r"\b(SA|AG|GmbH|S[àa]rl|SARL|Sagl|Ltd|Inc|SE|KG)\b")
 
 # Institutions de recherche : mots-clés -> canton (siège ou site principal). Les cas ambigus restent sans canton.
@@ -76,10 +78,23 @@ def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, l
     p = pd.read_csv(part_csv, dtype=str).fillna("")
     s = pd.read_csv(sieges_csv, dtype=str).fillna("") if sieges_csv else pd.DataFrame(columns=["UID"])
     seat = {r["UID"]: r for _, r in s.iterrows()}
-    p["is_business"] = p.apply(lambda r: bool(r["UID"]) or bool(BUSINESS_ROLE.search(r["KindOfParticipation"])) and bool(COMPANY_FORM.search(r["Company"])), axis=1)
+    # numéro IDE parfois collé au nom (« Sonova AG CHE-101.989.881 ») : on le sépare
+    emb = p["Company"].str.extract(r"CHE-?(\d{3})\.?(\d{3})\.?(\d{3})")
+    has = emb.notna().all(axis=1) & (p["UID"] == "")
+    p.loc[has, "UID"] = "CHE" + emb[0] + emb[1] + emb[2]
+    p["Company"] = p["Company"].str.replace(r"\s*,?\s*CHE-?\d{3}\.?\d{3}\.?\d{3}\s*", " ", regex=True).str.strip()
+    # côté entreprise = rôle « partenaire commercial / de mise en œuvre » publié par ARAMIS. Un numéro IDE seul ne suffit pas :
+    # des instituts de recherche (CSEM, SUPSI, inspire…) en ont un et figurent comme contact ou direction scientifique.
+    # Contact ou direction scientifique : institution de recherche, sauf entreprise (IDE ou forme juridique) au nom non
+    # académique, par exemple une start-up requérante d'un projet sans partenaire de recherche.
+    biz_role = p["KindOfParticipation"].apply(lambda k: bool(BUSINESS_ROLE.search(k)))
+    research_name = p["Company"].apply(lambda n: bool(re.search(RESEARCH_NAME, n, re.I)) or any(re.search(pt, n, re.I) for pt, _ in RESEARCH_RULES))
+    companyish = (p["UID"] != "") | p["Company"].apply(lambda n: bool(COMPANY_FORM.search(n)))
+    p["is_business"] = biz_role | (~research_name & companyish)
     # une même organisation peut figurer deux fois (contact et direction scientifique) : on dédoublonne par projet
     p["key"] = p.apply(lambda r: r["UID"] or norm(r["Company"]), axis=1)
-    p = p[p["key"] != ""].drop_duplicates(["ProjectNumber", "key", "is_business"])
+    # une organisation compte une fois par projet ; si elle est à la fois contact et partenaire commercial, côté entreprise
+    p = p[p["key"] != ""].sort_values("is_business", ascending=False).drop_duplicates(["ProjectNumber", "key"])
 
     def canton_of(r):
         if r["UID"] and r["UID"] in seat:
@@ -139,7 +154,8 @@ def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, l
                                 z["Town"] if z is not None else r["City"],
                                 int(z["MunicipalityBFS"]) if z is not None and str(z["MunicipalityBFS"]).isdigit() else None,
                                 name)
-            vd_orgs[oid] = {"id": oid, "name": name, "type": "Entreprise" if r["is_business"] else None, "uid": r["UID"],
+            not_co = re.search(NOT_COMPANY, name or "", re.I)
+            vd_orgs[oid] = {"id": oid, "name": name, "type": "Entreprise" if r["is_business"] and not not_co else None, "uid": r["UID"],
                             "bfs": bfs, "lat": round(ll[0], 5) if ll else None, "lon": round(ll[1], 5) if ll else None, "src": "INNO"}
         vd_projects[r["ProjectNumber"]].append((oid, "entreprise" if r["is_business"] else "recherche"))
     log("Innosuisse VD : projets", len(vd_projects), "| organisations", len(vd_orgs),

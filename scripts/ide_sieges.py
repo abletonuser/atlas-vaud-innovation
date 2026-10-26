@@ -37,7 +37,14 @@ def main():
     ap.add_argument("--batch", type=int, default=150); ap.add_argument("--test", action="store_true")
     a = ap.parse_args()
     with open(a.participants, encoding="utf-8-sig") as f:
-        uids = sorted({r["UID"] for r in csv.DictReader(f) if re.fullmatch(r"CHE\d{9}", r.get("UID") or "")})
+        uids = set()
+        for r in csv.DictReader(f):
+            if re.fullmatch(r"CHE\d{9}", r.get("UID") or ""):
+                uids.add(r["UID"])
+            m = re.search(r"CHE-?(\d{3})\.?(\d{3})\.?(\d{3})", r.get("Company") or "")   # numéro collé au nom
+            if m:
+                uids.add("CHE" + "".join(m.groups()))
+        uids = sorted(uids)
     known = set()
     if os.path.exists(a.out):
         with open(a.out, encoding="utf-8-sig") as f:
