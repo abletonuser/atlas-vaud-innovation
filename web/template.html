@@ -181,13 +181,17 @@ select, input[type="search"] { font: inherit; font-size: .92rem; color: var(--fg
 #hatchY .hb { fill: var(--nodata); } #hatchY .hl2 { stroke: var(--line-strong); stroke-width: 1.2; }
 .keyrow .hatch .sw { background: repeating-linear-gradient(45deg, var(--line-strong) 0 1.2px, var(--nodata) 1.2px 4px); outline: 1px solid var(--line-strong); }
 
-.scope { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px 22px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 14px 18px; font-size: .88rem; }
-.scope-head p { margin-top: 4px; }
-.scope ul { margin: 4px 0 0; padding-left: 1.1em; display: grid; gap: 4px; }
-.scope-t { font-family: var(--f-display); font-stretch: 85%; font-weight: 800; font-size: .95rem; }
+.scope-mini { position: relative; }
+.scope-mini > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; color: var(--hero-muted); font-size: .86rem; }
+.scope-mini > summary::-webkit-details-marker { display: none; }
+.scope-mini > summary:hover { color: var(--hero-fg); }
+.scope-mini .i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid currentColor; display: inline-grid; place-items: center; font: 700 10px/1 var(--f-body); }
+.scope { box-sizing: border-box; position: absolute; right: 0; top: calc(100% + 8px); z-index: 40; width: min(620px, calc(100vw - 32px)); display: grid; gap: 10px; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; font-size: .84rem; line-height: 1.45; box-shadow: 0 14px 34px rgba(0, 0, 0, .28); }
+.scope ul { margin: 4px 0 0; padding-left: 1.1em; display: grid; gap: 3px; }
+.scope-t { font-family: var(--f-display); font-stretch: 85%; font-weight: 800; font-size: .92rem; }
 .scope-col.in .scope-t { color: var(--accent); } .scope-col.out .scope-t { color: var(--muted); }
 .scope-col.out li { color: var(--muted); }
-@media (max-width: 900px) { .scope { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .scope { left: 0; right: auto; } }
 .filterbox { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; }
 .filterbox > summary { cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; list-style: none; }
 .filterbox > summary::-webkit-details-marker { display: none; }
@@ -220,6 +224,18 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
         <span><i class="dot eu"></i>Programmes-cadres UE · H2020 et Horizon Europe</span>
         <span><i class="dot ino"></i>Innosuisse · 2018 à 2026</span>
         <span class="muted">Données au <span id="gen" class="num">—</span></span>
+        <details class="scope-mini"><summary><span class="i">i</span>Périmètre de l'atlas</summary>
+          <div class="scope" role="note">
+    <div class="scope-head"><p><b>Cet atlas ne mesure pas toute l'innovation vaudoise.</b> Il montre seulement les projets financés par deux sources publiques. Un canton, une entreprise ou une région absents ici peuvent innover beaucoup par d'autres voies.</p></div>
+    <div class="scope-col in"><span class="scope-t">Inclus</span><ul>
+      <li><b>Programmes-cadres de l'UE</b> : H2020 (2014 à 2020) et Horizon Europe (depuis 2021), y compris ERC, Marie Skłodowska-Curie et EIC. Source CORDIS.</li>
+      <li><b>Innosuisse</b> : projets lancés depuis 2018 (projets d'innovation, chèques, projets internationaux, Flagships), avec tous leurs partenaires. Source ARAMIS.</li></ul></div>
+    <div class="scope-col out"><span class="scope-t">Non inclus</span><ul>
+      <li>La R&amp;D financée par les entreprises elles-mêmes, de loin la plus importante.</li>
+      <li>Le Fonds national suisse, les aides cantonales (LADE, FIT), le capital-risque, les prêts et les garanties.</li>
+      <li>Les autres programmes : Agence spatiale européenne, Digital Europe, Interreg, programmes de l'armée ou d'autres offices fédéraux.</li>
+      <li>Les montants versés par la Confédération (SEFRI) à la place de l'UE pendant la non-association (2021 à 2024), ainsi que les brevets, les créations d'entreprises et l'emploi.</li></ul></div>
+          </div></details>
       </div>
     </div>
     <section class="ledger" aria-label="Chiffres clés vaudois selon les filtres">
@@ -248,17 +264,6 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
 </header>
 
 <div class="wrap">
-  <section class="scope" aria-label="Périmètre de l'atlas">
-    <div class="scope-head"><span class="label">Périmètre</span><p><b>Cet atlas ne mesure pas toute l'innovation vaudoise.</b> Il montre seulement les projets financés par deux sources publiques. Un canton, une entreprise ou une région absents ici peuvent innover beaucoup par d'autres voies.</p></div>
-    <div class="scope-col in"><span class="scope-t">Inclus</span><ul>
-      <li><b>Programmes-cadres de l'UE</b> : H2020 (2014 à 2020) et Horizon Europe (depuis 2021), y compris ERC, Marie Skłodowska-Curie et EIC. Source CORDIS.</li>
-      <li><b>Innosuisse</b> : projets lancés depuis 2018 (projets d'innovation, chèques, projets internationaux, Flagships), avec tous leurs partenaires. Source ARAMIS.</li></ul></div>
-    <div class="scope-col out"><span class="scope-t">Non inclus</span><ul>
-      <li>La R&amp;D financée par les entreprises elles-mêmes, de loin la plus importante.</li>
-      <li>Le Fonds national suisse, les aides cantonales (LADE, FIT), le capital-risque, les prêts et les garanties.</li>
-      <li>Les autres programmes : Agence spatiale européenne, Digital Europe, Interreg, programmes de l'armée ou d'autres offices fédéraux.</li>
-      <li>Les montants versés par la Confédération (SEFRI) à la place de l'UE pendant la non-association (2021 à 2024), ainsi que les brevets, les créations d'entreprises et l'emploi.</li></ul></div>
-  </section>
   <details class="filterbox" id="filterbox" open>
   <summary><span class="label">Filtres</span><span class="fsum" id="fsum">—</span></summary>
   <section class="filters" aria-label="Filtres">
