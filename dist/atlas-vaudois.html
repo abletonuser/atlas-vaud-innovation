@@ -251,8 +251,8 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       <div><span class="label">Versé par l'UE à Vaud <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v eu" id="k-ec">—</span><span class="s" id="k-ec-s">—</span>
         <div class="pop" role="tooltip"><b>Montant UE</b><p>Somme des contributions de l'UE attribuées aux organisations vaudoises dans les conventions de subvention H2020 et Horizon Europe.</p>
           <p>C'est le montant prévu pour chaque participant, pas les paiements effectués à ce jour. Les fonds versés par la Confédération à la place de l'UE n'y figurent pas.</p></div></div>
-      <div><span class="label">Sans montant UE <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v" id="k-assoc">—</span><span class="s">participations non payées par l'UE</span>
-        <div class="pop" role="tooltip"><b>Pourquoi sans montant ?</b><p>Ce sont des participations vaudoises que CORDIS enregistre avec une contribution UE nulle.</p>
+      <div><span class="label">Payé par la Confédération <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v" id="k-assoc">—</span><span class="s">participations UE financées par le SEFRI à la place de l'UE</span>
+        <div class="pop" role="tooltip"><b>Qui a payé ?</b><p>Ce sont des participations vaudoises à de vrais projets européens, pour lesquelles l'UE n'a rien versé (0 EUR dans CORDIS). Elles ont bien été financées, mais par la Confédération.</p>
           <p>La raison principale est la <b>non-association</b> de la Suisse. Quand la Suisse n'est pas associée à un programme, ses chercheurs peuvent participer aux projets mais l'UE ne les paie pas : la Confédération (SEFRI) les finance directement. Ce fut le cas pour Horizon Europe de 2021 à 2024, et pour une partie de H2020 de 2014 à 2016.</p>
           <p>Selon les filtres :</p><ul><li><b id="a-he">—</b> partenaires associés Horizon Europe (non-association)</li><li><b id="a-h2">—</b> participations à des projets H2020 lancés de 2014 à 2016 (association partielle)</li><li><b id="a-oth">—</b> autres cas : partenaires non financés par choix, tiers liés</li></ul></div></div>
       <div><span class="label"><span id="k-chf-l">Coûts approuvés Innosuisse</span> <button type="button" class="info" aria-label="Explication" aria-expanded="false">i</button></span><span class="v ino" id="k-chf">—</span><span class="s" id="k-chf-s">—</span>
@@ -322,7 +322,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     </div>
     <div class="sheet plate">
       <h2>Vaud, chronologie</h2>
-      <p class="intro">Par année de début du projet. Les participations vaudoises sans montant UE correspondent surtout aux années où la Suisse n'était pas associée.</p>
+      <p class="intro">Par année de début du projet. En bleu clair : participations à des projets UE que l'UE n'a pas payées. De 2022 à 2025, elles ont été financées par la Confédération (SEFRI) à la place de l'UE.</p>
       <div class="mini-filters" aria-label="Filtres de la chronologie">
         <div class="seg" role="group" aria-label="Mesure"><button type="button" data-cm="n" aria-pressed="true">Nombre</button><button type="button" data-cm="amount" aria-pressed="false">Montant</button></div>
         <div class="seg" role="group" aria-label="Source"><button type="button" data-cs="all" aria-pressed="true">Les deux</button><button type="button" data-cs="EU" aria-pressed="false">UE</button><button type="button" data-cs="INNO" aria-pressed="false">Innosuisse</button></div>
@@ -864,7 +864,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
           <dt>Participations d'entreprises</dt><dd>${fInt(d.a.prc)}${d.a.n ? " (" + f1((100 * d.a.prc) / d.a.n) + " %)" : ""}</dd>
           <dt>Montant UE attribué</dt><dd>${eur(d.a.ec)}</dd>
           <dt>par habitant</dt><dd>${d.pop ? f1(d.a.ec / d.pop) + " EUR" : "—"}</dd>
-          <dt>Participations avec un montant UE</dt><dd>${fInt(d.a.funded)} sur ${fInt(d.a.n)}</dd>
+          <dt>Participations payées par l'UE</dt><dd>${fInt(d.a.funded)} sur ${fInt(d.a.n)}</dd>
           ${sc === "europe" ? `<dt>Participations à des projets avec Vaud</dt><dd>${fInt(d.a.partners || 0)}</dd>` : ""}`;
             let ino = "";
             if (sc === "suisse" && D.ino_fed) { const z = { n: 0, chf: 0 }, t = inoAgg(2).get(S.geoSel) || z, b = inoAgg(0).get(S.geoSel) || z, r = inoAgg(1).get(S.geoSel) || z;
@@ -927,7 +927,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     panel.insertAdjacentHTML("beforeend", `<button type="button" class="back" id="back">← Retour au classement</button>
       <div class="fiche-head"><h3>${esc(e.name)}</h3><div class="tags"><span class="tag">${esc(e.type)}</span>${e.sme ? '<span class="tag">PME</span>' : ""}${c ? `<span class="tag">${esc(c.name)} · ${esc(c.district)}</span>` : ""}${pos}</div></div>
       <div class="stats">
-        <div class="stat eu"><span class="v">${fInt(sel.eu.size)}</span><span class="s">participations UE${sel.eu.size ? ", dont " + fInt(sel.funded) + " avec montant UE" : ""}</span>${sel.ec > 0 ? `<span class="s num">${eur(sel.ec)}</span>` : ""}</div>
+        <div class="stat eu"><span class="v">${fInt(sel.eu.size)}</span><span class="s">participations UE${sel.eu.size ? ", dont " + fInt(sel.funded) + " payées par l'UE" : ""}</span>${sel.ec > 0 ? `<span class="s num">${eur(sel.ec)}</span>` : ""}</div>
         <div class="stat ino"><span class="v">${fInt(sel.ino.size)}</span><span class="s">projets Innosuisse</span>${sel.ino.size ? `<span class="s num">${chf(sel.chf)}${PART ? " attribués" : ""}</span>` : ""}</div>
       </div>`);
     $("back").onclick = () => { S.sel = null; render(); };
@@ -936,7 +936,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       const li = document.createElement("li");
       const title = d.src === "EU" ? `<a href="${d.url}" target="_blank" rel="noopener">${esc(d.acr)}</a> · ${esc(d.t)}` : esc(d.t);
       const role = { coordinator: "coordinateur", participant: "participant", partner: "partenaire", associatedPartner: "partenaire associé", thirdParty: "tiers lié" }[d.role] || "";
-      const meta = d.src === "EU" ? [d.fp, d.prog, role, d.ec > 0 ? eur(d.ec) : "sans montant UE"] : [d.prog, d.irole === "entreprise" ? "entreprise partenaire" : d.irole === "recherche" ? "partenaire de recherche" : null, d.dom[0], (PART ? "coût du projet " : "") + chf(d.chf), d.num];
+      const meta = d.src === "EU" ? [d.fp, d.prog, role, d.ec > 0 ? eur(d.ec) : "non payé par l'UE"] : [d.prog, d.irole === "entreprise" ? "entreprise partenaire" : d.irole === "recherche" ? "partenaire de recherche" : null, d.dom[0], (PART ? "coût du projet " : "") + chf(d.chf), d.num];
       li.innerHTML = `<span class="yr">${d.y}</span><span class="tt"><span class="src-mark ${d.src === "EU" ? "eu" : "ino"}">${d.src === "EU" ? "UE" : "INNO"}</span>${title}</span><span class="meta">${meta.filter(Boolean).map((m) => `<span>${esc(m)}</span>`).join("")}</span>`;
       ul.appendChild(li);
     }
@@ -956,7 +956,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     const dim = (id, on) => $(id).parentElement.classList.toggle("off", on);
     dim("k-ec", S.src === "INNO"); dim("k-assoc", S.src === "INNO"); dim("k-chf", S.src === "EU"); set("p-sme", fInt(nSme)); set("p-co", fInt(comp.length));
     const money = (id, v, cur) => { const big = v >= 1e6; $(id).innerHTML = `${big ? f1(v / 1e6) : fInt(Math.round(v))}<small>${big ? "mio " : ""}${cur}</small>`; };
-    money("k-ec", d3.sum(eu, (d) => d.ec), "EUR"); set("k-ec-s", `sur ${plural(eu.filter((d) => d.ec > 0).length, "participation", "participations")} avec montant`);
+    money("k-ec", d3.sum(eu, (d) => d.ec), "EUR"); set("k-ec-s", `sur ${plural(eu.filter((d) => d.ec > 0).length, "participation", "participations")} payées par l'UE`);
     const zero = eu.filter((d) => d.ec <= 0);
     const aHe = zero.filter((d) => d.fp === "Horizon Europe" && d.role === "associatedPartner").length;
     const aH2 = zero.filter((d) => d.fp === "H2020" && d.y <= 2016).length;
@@ -1047,10 +1047,10 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       if (showEU) {
         g.append("rect").attr("x", x1("eu")).attr("width", x1.bandwidth()).attr("y", (r) => y(r.fund)).attr("height", (r) => y(0) - y(r.fund)).attr("fill", "var(--eu)");
         g.append("rect").attr("x", x1("eu")).attr("width", x1.bandwidth()).attr("y", (r) => y(r.fund + r.assoc)).attr("height", (r) => y(r.fund) - y(r.fund + r.assoc)).attr("fill", "var(--eu-soft)").attr("stroke", "var(--eu)").attr("stroke-width", (r) => (r.assoc ? 0.8 : 0));
-        key.push(sw("background:var(--eu)", "UE, participations avec montant"), sw("background:var(--eu-soft);outline:1px solid var(--eu)", "UE, sans montant"));
+        key.push(sw("background:var(--eu)", "Projets UE, payés par l'UE"), sw("background:var(--eu-soft);outline:1px solid var(--eu)", "Projets UE, payés par la Confédération (SEFRI) ou non financés"));
       }
       if (showINO) { g.append("rect").attr("x", x1("ino")).attr("width", x1.bandwidth()).attr("y", (r) => y(r.ino)).attr("height", (r) => y(0) - y(r.ino)).attr("fill", "var(--ino)"); key.push(sw("background:var(--ino)", "Projets Innosuisse")); }
-      g.append("title").text((r) => `${r.y}` + (showEU ? ` · UE : ${fInt(r.fund)} participations avec montant, ${fInt(r.assoc)} sans montant` : "") + (showINO ? ` · Innosuisse : ${fInt(r.ino)} projets` : ""));
+      g.append("title").text((r) => `${r.y}` + (showEU ? ` · UE : ${fInt(r.fund)} participations payées par l'UE, ${fInt(r.assoc)} payées par la Confédération ou non financées` : "") + (showINO ? ` · Innosuisse : ${fInt(r.ino)} projets` : ""));
     } else {
       // Montants : un panneau par source, chacun dans sa monnaie (pas d'axe commun EUR / CHF)
       const ph = 170; const panels = [showEU && { k: "ec", t: "UE, montant versé (mio EUR)", c: "var(--eu)" }, showINO && { k: "chf", t: PART ? "Innosuisse, coûts attribués à Vaud (mio CHF)" : "Innosuisse, coûts approuvés (mio CHF)", c: "var(--ino)" }].filter(Boolean);
@@ -1068,7 +1068,7 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
     $("years-key").innerHTML = key.join("");
     const tEU = d3.sum(rows, (r) => r.fund + r.assoc), tF = d3.sum(rows, (r) => r.fund), tI = d3.sum(rows, (r) => r.ino);
     const scope = [orgOn ? ents.get(S.sel).name : C.dist ? "district " + C.dist : "Vaud", C.type || null].filter(Boolean).join(", ");
-    $("years-sum").textContent = `${scope}, ${S.y0} à ${S.y1} : ` + [showEU ? `${plural(tEU, "participation UE", "participations UE")} (dont ${fInt(tF)} avec montant, ${eur(d3.sum(rows, (r) => r.ec))})` : null, showINO ? `${plural(tI, "projet Innosuisse", "projets Innosuisse")} (${chf(d3.sum(rows, (r) => r.chf))}${PART ? " attribués" : ""})` : null].filter(Boolean).join(" ; ") + ".";
+    $("years-sum").textContent = `${scope}, ${S.y0} à ${S.y1} : ` + [showEU ? `${plural(tEU, "participation UE", "participations UE")} (dont ${fInt(tF)} payées par l'UE, ${eur(d3.sum(rows, (r) => r.ec))})` : null, showINO ? `${plural(tI, "projet Innosuisse", "projets Innosuisse")} (${chf(d3.sum(rows, (r) => r.chf))}${PART ? " attribués" : ""})` : null].filter(Boolean).join(" ; ") + ".";
   }
 
   // ---------- Notes ----------
