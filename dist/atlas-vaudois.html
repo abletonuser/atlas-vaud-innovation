@@ -486,8 +486,8 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
   }
   const MIN = { europe: 300, suisse: 30 };
   const IND = {
-    n: { label: "Participations", f: fInt, v: (a) => a.n },
-    n_pc: { label: "Participations par million d'habitants", f: f0, pc: true, v: (a, pop) => (pop ? (a.n / pop) * 1e6 : null) },
+    n: { label: "Participations (une par organisation et par projet)", f: fInt, v: (a) => a.n },
+    n_pc: { label: "Participations pour 100 000 habitants", f: f1, pc: true, v: (a, pop) => (pop ? (a.n / pop) * 1e5 : null) },
     coord: { label: "Coordinations", f: fInt, v: (a) => a.coord },
     pcoord: { label: "Part des coordinations", f: (v) => f1(v) + " %", pct: true, v: (a) => (a.n ? (100 * a.coord) / a.n : null) },
     pprc: { label: "Part des entreprises", f: (v) => f1(v) + " %", pct: true, v: (a) => (a.n ? (100 * a.prc) / a.n : null) },
@@ -818,8 +818,8 @@ footer b { font-family: var(--f-display); font-stretch: 75%; font-weight: 800; c
       panel.insertAdjacentHTML("beforeend", `<button type="button" class="back" id="back">← Retour au classement</button>
         <div class="fiche-head"><h3>${esc(nm(S.geoSel))}</h3><div class="tags"><span class="tag">${esc(periodText())}</span></div></div>
         <dl class="kv">
-          ${(() => { const eu = `<dt>Participations</dt><dd>${fInt(d.a.n)}</dd>
-          <dt>par million d'habitants</dt><dd>${d.pop ? f0((d.a.n / d.pop) * 1e6) : "—"}</dd>
+          ${(() => { const eu = `<dt>Participations (une par organisation et par projet)</dt><dd>${fInt(d.a.n)}</dd>
+          <dt>pour 100 000 habitants</dt><dd>${d.pop ? f1((d.a.n / d.pop) * 1e5) : "—"}</dd>
           <dt>Coordinations</dt><dd>${fInt(d.a.coord)}${d.a.n ? " (" + f1((100 * d.a.coord) / d.a.n) + " %)" : ""}</dd>
           <dt>Participations d'entreprises</dt><dd>${fInt(d.a.prc)}${d.a.n ? " (" + f1((100 * d.a.prc) / d.a.n) + " %)" : ""}</dd>
           <dt>Participations avec montant UE</dt><dd>${fInt(d.a.funded)}</dd>
