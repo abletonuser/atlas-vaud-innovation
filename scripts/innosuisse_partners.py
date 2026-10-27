@@ -94,13 +94,15 @@ def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, l
     p.loc[has, "UID"] = "CHE" + emb[0] + emb[1] + emb[2]
     p["Company"] = p["Company"].str.replace(r"\s*,?\s*CHE-?\d{3}\.?\d{3}\.?\d{3}\s*", " ", regex=True).str.strip()
     # numéro IDE retrouvé par la raison sociale (scripts/referentiel_ide.py) : confiance haute, ou validé à la main.
-    # Une même entreprise saisie avec et sans numéro n'est ainsi plus comptée comme deux organisations.
+    # Il sert à l'identité (UIDC) : une même entreprise saisie avec et sans numéro n'est plus comptée deux fois.
+    # La localisation reste celle publiée par ARAMIS (UID publié et son siège, sinon adresse du partenaire).
+    p["UIDC"] = p["UID"]
     corr = correspondances()
     if corr:
         from referentiel_ide import coeur
         sans = (p["UID"] == "") & (p["Canton"] == "VD")
         trouve = p.loc[sans, "Company"].map(lambda n: corr.get("INNO:" + coeur(n), ""))
-        p.loc[trouve.index, "UID"] = trouve
+        p.loc[trouve.index, "UIDC"] = trouve
         log("Innosuisse : IDE retrouvés par la raison sociale (VD)", int((trouve != "").sum()), "lignes sur", int(sans.sum()))
     # côté entreprise = rôle « partenaire commercial / de mise en œuvre » publié par ARAMIS. Un numéro IDE seul ne suffit pas :
     # des instituts de recherche (CSEM, SUPSI, inspire…) en ont un et figurent comme contact ou direction scientifique.
@@ -111,7 +113,7 @@ def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, l
     companyish = (p["UID"] != "") | p["Company"].apply(lambda n: bool(COMPANY_FORM.search(n)))
     p["is_business"] = biz_role | (~research_name & companyish)
     # une même organisation peut figurer deux fois (contact et direction scientifique) : on dédoublonne par projet
-    p["key"] = p.apply(lambda r: r["UID"] or norm(r["Company"]), axis=1)
+    p["key"] = p.apply(lambda r: r["UIDC"] or norm(r["Company"]), axis=1)
     # une organisation compte une fois par projet ; si elle est à la fois contact et partenaire commercial, côté entreprise
     p = p[p["key"] != ""].sort_values("is_business", ascending=False).drop_duplicates(["ProjectNumber", "key"])
 
@@ -165,7 +167,7 @@ def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, l
     vd = p[p["canton"] == "VD"]
     vd_orgs, vd_projects = {}, defaultdict(list)
     for _, r in vd.iterrows():
-        oid = "IU" + r["UID"] if r["UID"] else "IR" + re.sub(r"\W+", "_", norm(r["Company"]))[:50]
+        oid = "IU" + r["UIDC"] if r["UIDC"] else "IR" + re.sub(r"\W+", "_", norm(r["Company"]))[:50]
         if oid not in vd_orgs:
             z = seat.get(r["UID"]) if r["UID"] else None
             name = (z["Name"] if z is not None and z["Name"] else r["Company"])
@@ -174,7 +176,7 @@ def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, l
                                 int(z["MunicipalityBFS"]) if z is not None and str(z["MunicipalityBFS"]).isdigit() else None,
                                 name)
             not_co = re.search(NOT_COMPANY, name or "", re.I)
-            vd_orgs[oid] = {"id": oid, "name": name, "type": "Entreprise" if r["is_business"] and not not_co else None, "uid": r["UID"],
+            vd_orgs[oid] = {"id": oid, "name": name, "type": "Entreprise" if r["is_business"] and not not_co else None, "uid": r["UIDC"],
                             "bfs": bfs, "lat": round(ll[0], 5) if ll else None, "lon": round(ll[1], 5) if ll else None, "src": "INNO"}
         vd_projects[r["ProjectNumber"]].append((oid, "entreprise" if r["is_business"] else "recherche"))
     log("Innosuisse VD : projets", len(vd_projects), "| organisations", len(vd_orgs),

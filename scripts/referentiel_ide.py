@@ -23,6 +23,7 @@ FORMES = (r"\b(s a r l|sarl|s a|sa|ag|gmbh|ltd|limited|inc|llc|sas|srl|plc|bv|kg
           r"|in liq|en liq|i l|in liquidazione|en faillite|in konkurs)\b")
 GENERIQUES = r"\b(holding|group|groupe|international|switzerland|suisse|schweiz|svizzera|swiss|europe|the)\b"
 SUCCURSALE = r"succursale|zweigniederlassung|filiale|branch|niederlassung"
+FORME_ENTREPRISE = r"\b(s\.?\s?a\.?|s\.?\s?à\.?\s?r\.?\s?l\.?|sarl|ag|gmbh|ltd|sagl|inc|llc|holding)\b"
 
 
 def sans_accents(s):
@@ -46,12 +47,13 @@ def uid_dans(s):
 
 
 class Registre:
-    def __init__(self, base="data/state"):
+    def __init__(self, base="data/state", sources_atlas=True):
         self.ent = {}                                    # uid -> {noms, bfs}
         def ajoute(uid, nom, bfs, forme=""):
             e = self.ent.setdefault(uid, {"noms": set(), "bfs": bfs, "forme": forme})
             e["noms"].add(nom)
             e["bfs"] = e["bfs"] or bfs
+            e["forme"] = e["forme"] or forme
         p = f"{base}/registre/registre_vd.csv.gz"
         if os.path.exists(p):
             with gzip.open(p, "rt", encoding="utf-8") as f:
@@ -61,7 +63,7 @@ class Registre:
         p = f"{base}/registre/recherche.csv"
         if os.path.exists(p):
             for r in csv.DictReader(open(p, encoding="utf-8")):
-                ajoute(r["UID"], r["Name"], r["MunicipalityBFS"])
+                ajoute(r["UID"], r["Name"], r["MunicipalityBFS"], r.get("LegalForm", ""))
         p = f"{base}/ide_sieges.csv"
         self.commune_bfs = {}
         if os.path.exists(p):
@@ -70,6 +72,27 @@ class Registre:
                     ajoute(r["UID"], r["Name"], r["MunicipalityBFS"])
                 if r["Municipality"] and r["MunicipalityBFS"]:
                     self.commune_bfs[sans_accents(r["Municipality"])] = r["MunicipalityBFS"]
+        # IDE publiés par les sources de l'atlas : ARAMIS (partenaires Innosuisse) et CORDIS (n° TVA). Ils couvrent aussi
+        # des entreprises radiées ou rachetées, absentes du registre actif.
+        self.atlas = set()
+        for r in (lire_csv(f"{base}/innosuisse_participants.csv") if sources_atlas else []):
+            u = r["UID"] if re.fullmatch(r"CHE\d{9}", r["UID"] or "") else uid_dans(r["Company"])
+            if u:
+                self.atlas.add(u)
+                ajoute(u, re.sub(r"CHE[\s-]*\d{3}[.\s]?\d{3}[.\s]?\d{3}", "", r["Company"]).strip(" ,"), "")
+        try:
+            import pandas as pd
+            for f in (["organization", "h2020_organization"] if sources_atlas else []):
+                pth = f"data/cache/{f}.pkl"
+                if os.path.exists(pth):
+                    o = pd.read_pickle(pth)
+                    o = o[o["country"] == "CH"]
+                    for nom, vat in zip(o["name"].tolist(), o["vatNumber"].tolist()):
+                        u = uid_dans(str(vat))
+                        if u:
+                            self.atlas.add(u); ajoute(u, str(nom), "")
+        except ImportError:
+            pass
         self.idx1, self.idx2 = defaultdict(set), defaultdict(set)
         for u, e in self.ent.items():
             for n in e["noms"]:
@@ -78,6 +101,7 @@ class Registre:
                 self.idx1[coeur(n)].add(u)
                 self.idx2[coeur(n, True)].add(u)
         self.cles_vd = sorted({coeur(n) for u in self.vd for n in self.ent[u]["noms"]} - {""})
+        self.cles_tout = sorted(self.idx1)
         print(f"Registre : {len(self.ent)} entités ({len(self.vd)} à siège vaudois), {len(self.idx1)} raisons sociales")
 
     def nom(self, u):
@@ -96,26 +120,54 @@ class Registre:
 
         def tri(cands):
             # siège dans la commune indiquée, puis dans le canton, puis ailleurs
-            return sorted(cands, key=lambda u: (self.bfs(u) != bfs if bfs else True, u not in self.vd, u))
+            # (les succursales, forme 0151 / 0111, passent après l'entité principale)
+            return sorted(cands, key=lambda u: (self.ent[u]["forme"] in ("0151", "0111"),
+                                                self.bfs(u) != bfs if bfs else True, u not in self.vd, u))
 
         for niveau, idx, gen in [("identique", self.idx1, False), ("identique hors mots génériques", self.idx2, True)]:
             cands = set()
-            for n in noms:
+            for n in noms:                       # raison sociale d'abord, nom d'usage ensuite
                 c = coeur(n, gen)
                 if len(c) >= 3:
-                    cands |= idx.get(c, set())
+                    cands = set(idx.get(c, set()))
+                if cands:
+                    break
             if not cands:
                 continue
             cands = tri(cands)
             u = cands[0]
-            siege_ok = (self.bfs(u) == bfs) if bfs else (u in self.vd or not vaudois)
+            # siège cohérent : vaudois pour une entreprise attendue dans le canton (la commune exacte du référentiel est
+            # souvent approximative : Lausanne pour Ecublens ou Epalinges), quelconque sinon
+            siege_ok = (u in self.vd) if vaudois else True
+            principales = [x for x in cands if self.ent[x]["forme"] not in ("0151", "0111")]
+            if len(principales) == 1:
+                cands = principales
             if len(cands) == 1:
-                conf = "haute" if (niveau == "identique" and siege_ok) else "moyenne"
-                return u, conf, niveau, []
+                if niveau == "identique" and siege_ok:
+                    return u, "haute", niveau, []
+                if niveau == "identique" and u in self.atlas and not self.bfs(u):
+                    return u, "moyenne", niveau + " (IDE publié par ARAMIS ou CORDIS, absent du registre actif)", []
+                return u, "moyenne" if siege_ok else "basse", niveau + ("" if siege_ok else ", siège hors du canton"), []
             # plusieurs entités du même nom : une seule dans la commune indiquée suffit
             if bfs and sum(self.bfs(x) == bfs for x in cands) == 1:
                 return u, "moyenne", niveau + ", plusieurs entités (commune décisive)", cands[1:4]
             return u, "basse", niveau + ", plusieurs entités", cands[1:4]
+        # nom complété : la raison sociale commence par le nom connu (« Zaphiro » -> « Zaphiro Technologies SA »)
+        import bisect
+        for n in noms:
+            c = coeur(n)
+            if len(c) < 4:
+                continue
+            i = bisect.bisect_left(self.cles_tout, c + " ")
+            cles = []
+            while i < len(self.cles_tout) and self.cles_tout[i].startswith(c + " "):
+                cles.append(self.cles_tout[i]); i += 1
+            cands = tri({u for k in cles for u in self.idx1[k]})
+            vd = [x for x in cands if x in self.vd or (x in self.atlas and not self.bfs(x))]
+            if len(vd) == 1:
+                return vd[0], "moyenne", "nom complété dans le registre", []
+            if vd:
+                return vd[0], "basse", "nom complété, plusieurs entités", vd[1:4]
         # nom proche parmi les entités vaudoises
         from rapidfuzz import fuzz, process
         best = None
@@ -123,8 +175,11 @@ class Registre:
             c = coeur(n)
             if len(c) < 4:
                 continue
-            for cle, score, _ in process.extract(c, self.cles_vd, scorer=fuzz.ratio, limit=3):
-                if score >= 90 and (best is None or score > best[1]):
+            c0 = c.replace(" ", "")
+            for cle, score, _ in process.extract(c, self.cles_vd, scorer=fuzz.ratio, limit=5):
+                k0 = cle.replace(" ", "")
+                score = fuzz.ratio(c0, k0)
+                if score >= 92 and k0[:3] == c0[:3] and (best is None or score > best[1]):
                     best = (cle, score)
         if best:
             cands = tri(self.idx1.get(best[0], set()))
@@ -151,18 +206,21 @@ def ecrire_csv(p, champs, lignes, delim=","):
 def controle(reg):
     """Précision mesurée : on cache l'IDE des partenaires Innosuisse vaudois qui en ont un, et on le retrouve par le nom."""
     vus, ok, faux, rien = set(), defaultdict(int), defaultdict(list), 0
+    vd_bfs = set(json.load(open("data/ref/vd_commune_district.json", encoding="utf-8")))
+    siege = {r["UID"]: r["MunicipalityBFS"] for r in lire_csv("data/state/ide_sieges.csv")}
     for r in lire_csv("data/state/innosuisse_participants.csv"):
-        if r["Canton"] != "VD" or not re.fullmatch(r"CHE\d{9}", r["UID"] or "") or r["UID"] in vus:
+        u0 = r["UID"]
+        if not re.fullmatch(r"CHE\d{9}", u0 or "") or siege.get(u0) not in vd_bfs or u0 in vus:
             continue
-        vus.add(r["UID"])
+        vus.add(u0)
         nom = re.sub(r"CHE[\s-]*\d{3}[.\s]?\d{3}[.\s]?\d{3}", "", r["Company"])
-        u, conf, meth, _ = reg.chercher([nom], reg.commune_bfs.get(sans_accents(r["City"])))
+        u, conf, meth, _ = reg.chercher([nom])
         if not u:
             rien += 1
-        elif u == r["UID"]:
+        elif u == u0:
             ok[conf] += 1
         else:
-            faux[conf].append((r["Company"], r["UID"], u, reg.nom(u)))
+            faux[conf].append((r["Company"], u0, u, reg.nom(u)))
     lignes = [f"Contrôle sur {len(vus)} partenaires Innosuisse vaudois dont l'IDE est connu :"]
     for conf in ["haute", "moyenne", "basse"]:
         n = ok[conf] + len(faux[conf])
@@ -182,7 +240,7 @@ def atlas(reg, sortie="data/ref/ide_correspondances.csv"):
     anciens = {r["cle"]: r for r in lire_csv(sortie) if r.get("valide") in ("OUI", "NON")}
     a_faire = {}
     for r in lire_csv("data/state/innosuisse_participants.csv"):
-        if r["UID"] or r["Canton"] != "VD" or uid_dans(r["Company"]):
+        if r["UID"] or r["Canton"] != "VD" or uid_dans(r["Company"]) or not re.search(FORME_ENTREPRISE, r["Company"], re.I):
             continue
         cle = "INNO:" + coeur(r["Company"])
         a_faire.setdefault(cle, (r["Company"], r["City"], r["PostCode"]))
@@ -193,7 +251,8 @@ def atlas(reg, sortie="data/ref/ide_correspondances.csv"):
             if not os.path.exists(p):
                 continue
             o = pd.read_pickle(p)
-            o = o[(o["country"] == "CH") & o["postCode"].astype(str).str.match(r"1[0-9]{3}")]
+            npa_vd = {z["zipcode"] for z in json.load(open("data/ref/ch_zip_geonames.json", encoding="utf-8")) if z["state_code"] == "VD"}
+            o = o[(o["country"] == "CH") & o["postCode"].astype(str).str[:4].isin(npa_vd) & (o["activityType"] == "PRC")]
             for _, r in o.iterrows():
                 if uid_dans(str(r["vatNumber"])):
                     continue
@@ -229,11 +288,20 @@ def scaleups(reg, src, sortie):
             conf, meth, autres = "haute", "numéro noté dans le référentiel", []
         else:
             u, conf, meth, autres = reg.chercher([r["raison_sociale"], r["company"]], bfs, vaudois=r["siege_canton"] in ("", "VD"))
+        # autres entités du même nom (ancienne société en liquidation, holding et société opérationnelle, etc.) :
+        # rattachées à la scale-up pour retrouver tous ses projets, sauf succursales et homonymes hors du canton
+        lies = set()
+        for n in (r["company"], r["raison_sociale"]):
+            c = coeur(n)
+            if len(c) >= 4:
+                lies |= reg.idx1.get(c, set())
+        lies = sorted(x for x in lies - {u} if reg.ent[x]["forme"] not in ("0151", "0111")
+                      and (x in reg.vd or (x in reg.atlas and not reg.bfs(x))))
         lignes.append({**{k: r[k] for k in ("company", "raison_sociale", "siege_commune", "siege_canton", "perimetre", "statut_registre")},
-                       "uid": u, "nom_registre": reg.nom(u), "bfs_registre": reg.bfs(u), "confiance": conf, "methode": meth,
+                       "uid_autres": " ".join(lies), "uid": u, "nom_registre": reg.nom(u), "bfs_registre": reg.bfs(u), "confiance": conf, "methode": meth,
                        "autres_candidats": " | ".join(f"{x} {reg.nom(x)}" for x in autres), "uid_valide": ""})
     ecrire_csv(sortie, ["company", "raison_sociale", "siege_commune", "siege_canton", "perimetre", "statut_registre", "uid",
-                        "nom_registre", "bfs_registre", "confiance", "methode", "autres_candidats", "uid_valide"], lignes, ";")
+                        "uid_autres", "nom_registre", "bfs_registre", "confiance", "methode", "autres_candidats", "uid_valide"], lignes, ";")
     n = defaultdict(int)
     for l in lignes:
         n[l["confiance"]] += 1
@@ -244,8 +312,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--scaleups"); ap.add_argument("--sortie-scaleups")
     a = ap.parse_args()
+    controle(Registre(sources_atlas=False))      # précision mesurée sur le registre seul, sans les noms ARAMIS
     reg = Registre()
-    controle(reg)
     atlas(reg)
     if a.scaleups and a.sortie_scaleups:
         scaleups(reg, a.scaleups, a.sortie_scaleups)

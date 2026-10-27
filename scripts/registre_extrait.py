@@ -114,10 +114,11 @@ def recherche():
     for k in range(0, len(motifs), 20):
         lot = motifs[k:k + 20]
         rx = "|".join(motif_regex(m) for m in lot)
-        q = PREFIX + f"""SELECT ?c ?uid ?name ?muni WHERE {{
+        q = PREFIX + f"""SELECT ?c ?uid ?name ?muni ?form WHERE {{
   ?c schema:legalName ?name . FILTER(REGEX(STR(?name), "{rx}", "i"))
   ?c schema:identifier ?id . ?id schema:value ?uid . FILTER(STRSTARTS(STR(?uid), "CHE"))
   OPTIONAL {{ ?c admin:municipality ?muni }}
+  OPTIONAL {{ ?c schema:additionalType ?form }}
 }} LIMIT 6000"""
         try:
             res = sparql(q, timeout=600)
@@ -126,12 +127,12 @@ def recherche():
         for b in res:
             u = uid_norm(v(b, "uid"))
             if u:
-                rows.append([u, v(b, "name"), bfs(v(b, "muni"))])
+                rows.append([u, v(b, "name"), bfs(v(b, "muni")), v(b, "form").rsplit("/", 1)[-1]])
         print(f"  motifs {k + len(lot)}/{len(motifs)} : {len(rows)} résultats")
         time.sleep(1)
     with open(f"{OUT}/recherche.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["UID", "Name", "MunicipalityBFS"])
+        w.writerow(["UID", "Name", "MunicipalityBFS", "LegalForm"])
         w.writerows(sorted(set(map(tuple, rows))))
 
 
