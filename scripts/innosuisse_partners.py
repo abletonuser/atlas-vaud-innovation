@@ -74,6 +74,16 @@ def learn_from_contacts(ino_contacts, zip_ref, cordis_ch):
             votes[norm(name)][canton] += 1
     return {k: c.most_common(1)[0][0] for k, c in votes.items() if c and c.most_common(1)[0][1] >= 1}
 
+def correspondances(path="data/ref/ide_correspondances.csv"):
+    """clé (INNO:raison sociale | EU:PIC) -> IDE, pour les correspondances sûres (confiance haute ou validées OUI)."""
+    import csv, os
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as f:
+        return {r["cle"]: r["uid"] for r in csv.DictReader(f)
+                if r["uid"] and r.get("valide") != "NON" and (r["confiance"] == "haute" or r.get("valide") == "OUI")}
+
+
 def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, log):
     p = pd.read_csv(part_csv, dtype=str).fillna("")
     s = pd.read_csv(sieges_csv, dtype=str).fillna("") if sieges_csv else pd.DataFrame(columns=["UID"])
@@ -83,6 +93,15 @@ def build(part_csv, sieges_csv, ino, zip_ref, muni_canton, vd_locate, learned, l
     has = emb.notna().all(axis=1) & (p["UID"] == "")
     p.loc[has, "UID"] = "CHE" + emb[0] + emb[1] + emb[2]
     p["Company"] = p["Company"].str.replace(r"\s*,?\s*CHE-?\d{3}\.?\d{3}\.?\d{3}\s*", " ", regex=True).str.strip()
+    # numéro IDE retrouvé par la raison sociale (scripts/referentiel_ide.py) : confiance haute, ou validé à la main.
+    # Une même entreprise saisie avec et sans numéro n'est ainsi plus comptée comme deux organisations.
+    corr = correspondances()
+    if corr:
+        from referentiel_ide import coeur
+        sans = (p["UID"] == "") & (p["Canton"] == "VD")
+        trouve = p.loc[sans, "Company"].map(lambda n: corr.get("INNO:" + coeur(n), ""))
+        p.loc[trouve.index, "UID"] = trouve
+        log("Innosuisse : IDE retrouvés par la raison sociale (VD)", int((trouve != "").sum()), "lignes sur", int(sans.sum()))
     # côté entreprise = rôle « partenaire commercial / de mise en œuvre » publié par ARAMIS. Un numéro IDE seul ne suffit pas :
     # des instituts de recherche (CSEM, SUPSI, inspire…) en ont un et figurent comme contact ou direction scientifique.
     # Contact ou direction scientifique : institution de recherche, sauf entreprise (IDE ou forme juridique) au nom non

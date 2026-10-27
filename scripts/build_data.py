@@ -5,7 +5,7 @@ Références : NPA GeoNames (paquet npm swiss-zipcodes), communes et cantons swi
 Sortie : build/data.json (consommé par la page) + build/qa.txt (contrôles).
 Usage : python3 build_data.py <dossier du dépôt>
 """
-import json, re, sys, unicodedata
+import json, os, re, sys, unicodedata
 import shapefile
 from collections import Counter
 import pandas as pd
@@ -137,6 +137,9 @@ hesso = [[0 if f == "H2020" else 1, int(y), int(len(g)), round(float(g["ec"].sum
 log("CORDIS : participations HES-SO (siège Delémont)", len(hs), "| EUR", round(float(hs["ec"].sum()), 2))
 known_pids = set(prj["id"])
 orgs, parts = {}, []
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from innosuisse_partners import correspondances
+EU_CORR = correspondances()      # participants UE sans n° TVA : IDE retrouvé par la raison sociale
 for _, r in vd.iterrows():
     c = canon(r["name"])
     oid = "E" + (re.sub(r"\W+", "_", c) if c in CAT_BY_CANON else str(r["organisationID"]))   # fusionne les doublons d'une même institution
@@ -145,8 +148,10 @@ for _, r in vd.iterrows():
             ll = POS_OVERRIDE[c]; bfs = commune_of(*ll)
         else:
             ll, bfs = locate(r["geolocation"], r["postCode"], r["city"])
+        m = re.search(r"CHE-?(\d{3})\.?(\d{3})\.?(\d{3})", str(r.get("vatNumber", "")))   # n° TVA = IDE + « MWST »
         orgs[oid] = {"id": oid, "name": c if c in CAT_BY_CANON else r["name"],
                      "type": CAT_BY_CANON.get(c, TYPE_EU.get(r["activityType"], AU)),
+                     "uid": "CHE" + "".join(m.groups()) if m else EU_CORR.get("EU:" + str(r["organisationID"]).split(".")[0], ""),
                      "sme": r["SME"] == "true", "bfs": bfs,
                      "lat": round(ll[0], 5) if ll else None, "lon": round(ll[1], 5) if ll else None, "src": "EU"}
     if r["projectID"] in known_pids:

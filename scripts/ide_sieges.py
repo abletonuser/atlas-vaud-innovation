@@ -44,7 +44,11 @@ def main():
             m = re.search(r"CHE-?(\d{3})\.?(\d{3})\.?(\d{3})", r.get("Company") or "")   # numéro collé au nom
             if m:
                 uids.add("CHE" + "".join(m.groups()))
-        uids = sorted(uids)
+    corr = "data/ref/ide_correspondances.csv"       # IDE retrouvés par la raison sociale (scripts/referentiel_ide.py)
+    if os.path.exists(corr):
+        with open(corr, encoding="utf-8") as f:
+            uids |= {r["uid"] for r in csv.DictReader(f) if re.fullmatch(r"CHE\d{9}", r.get("uid") or "")}
+    uids = sorted(uids)
     known = set()
     if os.path.exists(a.out):
         with open(a.out, encoding="utf-8-sig") as f:
