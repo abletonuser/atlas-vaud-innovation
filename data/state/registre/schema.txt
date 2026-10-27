@@ -1,0 +1,26 @@
+# entreprise
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type	http://schema.org/DefinedTerm
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type	http://schema.org/Organization
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type	https://schema.ld.admin.ch/ZefixOrganisation
+http://schema.org/name	Distalmotion AG
+http://schema.org/name	Distalmotion Ltd
+http://schema.org/description	La recherche, le développement, la fabrication, la promotion et la commercialisation de dispositifs chirurgicaux de haute qualité dans le domaine médical ainsi que la fourniture de tous services y relatifs (pour but complet cf. statuts).
+http://schema.org/identifier	https://register.ld.admin.ch/zefix/company/1050847/UID/CHE330040916
+http://schema.org/identifier	https://register.ld.admin.ch/zefix/company/1050847/CHID/CH55011054279
+http://schema.org/identifier	https://register.ld.admin.ch/zefix/company/1050847/EHRAID
+http://schema.org/inDefinedTermSet	https://ld.admin.ch/dimension/zefix
+http://schema.org/address	https://register.ld.admin.ch/zefix/company/1050847/address
+http://schema.org/additionalType	https://ld.admin.ch/ech/97/legalforms/0106
+http://schema.org/legalName	Distalmotion SA
+http://www.w3.org/ns/locn#address	https://register.ld.admin.ch/zefix/company/1050847/address
+https://schema.ld.admin.ch/municipality	https://ld.admin.ch/municipality/5584
+# identifiants
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type	http://schema.org/PropertyValue
+http://schema.org/name	CompanyUID
+http://schema.org/value	CHE330040916
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type	http://schema.org/PropertyValue
+http://schema.org/name	CompanyCHID
+http://schema.org/value	CH55011054279
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type	http://schema.org/PropertyValue
+http://schema.org/name	CompanyEHRAID
+http://schema.org/value	1050847
