@@ -1,6 +1,6 @@
 cle,nom_source,npa,localite,uid,nom_registre,bfs_registre,confiance,methode,autres_candidats,valide
 EU:879447009,MCPV Innovation Sàrl,1429,Giez,CHE317075924,MCPV Innovation Sàrl,5559,haute,identique,,
-EU:879912027,ESH Médias Editions SA,1260,Nyon,CHE103959721,ESH Médias Editions SA,6266,basse,"identique, siège hors du canton",,
+EU:879912027,ESH Médias Editions SA,1260,Nyon,CHE174983839,ESH Médias Editions SA,6266,basse,"identique, siège hors du canton",,OUI
 EU:880089052,fundingloop Sàrl,1004,Lausanne,CHE360280098,fundingloop Sàrl,5586,haute,identique,,
 EU:884884926,LUXTELLIGENCE SA,1025,Saint-Sulpice,CHE265797899,LUXTELLIGENCE SA,5648,haute,identique,,
 EU:885518627,MOBILYSIS SARL,1005,LAUSANNE,CHE257921074,MobiLysis Sàrl,5586,haute,identique,,
@@ -28,7 +28,7 @@ EU:998025532,SOLARONIX SA,1170,Aubonne,CHE103829320,Solaronix S.A.,5422,haute,id
 EU:998345244,BLUEBOTICS SA,1015,Lausanne,CHE101861637,BlueBotics SA,5648,haute,identique,,
 EU:999680158,LYNCEE TEC SA,1015,Lausanne,CHE110060375,Lyncée Tec SA,5635,haute,identique,,
 EU:999780359,NETUNION SARL,1007,Lausanne,,,,aucune,,,
-INNO:1world swiss,1World Swiss SA,1003,Lausanne,CHE162467910,1World Swiss SA,6458,basse,"identique, siège hors du canton",,
+INNO:1world swiss,1World Swiss SA,1003,Lausanne,CHE162467910,1World Swiss SA,6458,basse,"identique, siège hors du canton",,OUI
 INNO:3d precision,3D precision SA,2800,Delémont,,,,aucune,,,
 INNO:ac bioscience,AC BioScience SA,1066,Ecublens,CHE204204703,"AC BioScience SA, en liquidation",5584,haute,identique,,
 INNO:addmin,Addmin SA,1005,Lausanne,,,,aucune,,,
@@ -42,7 +42,7 @@ INNO:alpara,Alpara Sàrl,1274,Grens,,,,aucune,,,
 INNO:arandee,ARANDEE SA,1003,Lausanne,,,,aucune,,,
 INNO:asecud,Asecud SA,1015,Lausanne,CHE225888811,Asecud SA,5635,haute,identique,,
 INNO:aspivix,ASPIVIX SA,1020,Renens,CHE347247288,ASPIVIX SA,5584,haute,identique,,
-INNO:audemars piguet,Audemars Piguet & Cie SA,1348,Le Brassus,CHE107910932,Audemars Piguet (Suisse) SA,5649,basse,"identique, plusieurs entités",CHE112702517 Audemars Piguet (Marketing) SA,
+INNO:audemars piguet,Audemars Piguet & Cie SA,1348,Le Brassus,CHE101265949,Audemars Piguet (Suisse) SA,5649,basse,"identique, plusieurs entités",CHE112702517 Audemars Piguet (Marketing) SA,OUI
 INNO:aurora s grid,Aurora's Grid Sàrl,1015,Lausanne,CHE236557577,Aurora's Grid SA,5591,haute,identique,,
 INNO:avalia systems,Avalia Systems SA,1400,Yverdon-les-bais,CHE421691475,Avalia Systems SA,5938,haute,identique,,
 INNO:avatronics,AVAtronics SA,1018,Lausanne,CHE191728053,AVAtronics SA,5586,haute,identique,,
@@ -52,9 +52,9 @@ INNO:bhaasha,Bhaasha Sàrl,1400,Yverdon-les-Bains,CHE297403578,Bhaasha Sàrl,562
 INNO:bhive ch,Bhive.ch sàrl,1015,Lausanne,CHE485182383,Bhive.ch SARL,5635,haute,identique,,
 INNO:biofluid systems,Biofluid Systems SA,1272,Genolier,CHE362263343,Biofluid Systems SA,5718,haute,identique,,
 INNO:biospectal,Biospectal SA,1005,Lausanne,CHE433900705,Biospectal SA,5586,haute,identique,,
-INNO:biowatch,BIOWATCH SA,1005,Lausanne,CHE151116375,BIOWATCH SA,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,
+INNO:biowatch,BIOWATCH SA,1005,Lausanne,CHE151116375,BIOWATCH SA,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,OUI
 INNO:blunergy,Blunergy SA,1115,Lausanne,CHE183210104,Blunergy SA,5635,haute,identique,,
-INNO:buildigo,Buildigo SA,1030,Bussigny,CHE254972767,Buildigo AG in Liquidation,351,basse,"identique, siège hors du canton",,
+INNO:buildigo,Buildigo SA,1030,Bussigny,CHE254972767,Buildigo AG in Liquidation,351,basse,"identique, siège hors du canton",,OUI
 INNO:caulys,Caulys SA,1020,Renens,CHE291437219,Caulys SA en liquidation,5591,haute,identique,,
 INNO:cche lausanne,CCHE Lausanne SA,1007,Lausanne,CHE102064023,CCHE Lausanne SA,5586,haute,identique,,
 INNO:chemalive,ChemAlive SA,1006,Lausanne,CHE444403948,ChemAlive SA,5586,haute,identique,,
@@ -64,7 +64,7 @@ INNO:cleangreens solutions,CleanGreens Solutions SA,1415,Molondin,CHE448240131,C
 INNO:cleanmotion,CleanMotion Sàrl,1005,Lausanne,CHE355359311,CleanMotion Sàrl,5586,haute,identique,,
 INNO:cleap,Cleap SA,1003,Lausanne,CHE258059773,Cleap SA,5635,haute,identique,,
 INNO:comphya,Comphya SA,1015,Lausanne,CHE241453328,Comphya SA,5635,haute,identique,,
-INNO:corpus health,Corpus Health SA,1800,Vevey,CHE329960709,Corpus Health Group SA,5613,moyenne,identique hors mots génériques,,
+INNO:corpus health,Corpus Health SA,1800,Vevey,CHE329960709,Corpus Health Group SA,5613,moyenne,identique hors mots génériques,,OUI
 INNO:creal,CREAL SA,1024,Ecublens,CHE305369655,CREAL SA,5635,haute,identique,,
 INNO:darwin digital,Darwin Digital Sàrl,1015,Lausanne,CHE397802223,Darwin Digital Sàrl,5886,haute,identique,,
 INNO:de bethune,De Bethune SA,1454,L'Auberson,CHE109539719,DE BETHUNE SA,5568,haute,identique,,
@@ -84,7 +84,7 @@ INNO:eqlosion,eqlosion sàrl,1077,Servion,CHE452477535,eqlosion sàrl,5586,haute
 INNO:erep,EREP SA,1123,Aclen,CHE107971141,EREP SA,5938,haute,identique,,
 INNO:evrythng,EVRYTHNG Sàrl,1260,Nyon,CHE364585148,EVRYTHNG Sàrl,5586,haute,identique,,
 INNO:fastcom technology,Fastcom Technology S.A.,1007,Lausanne,CHE104125115,Fastcom Technology S.A.,5586,haute,identique,,
-INNO:ferring international,Ferring International SA,1162,Saint-Prex,CHE101335515,Ferring Holding S.A.,5646,moyenne,"identique hors mots génériques, plusieurs entités (commune décisive)",CHE100001655 Ferring AG,
+INNO:ferring international,Ferring International SA,1162,Saint-Prex,CHE101335515,Ferring Holding S.A.,5646,moyenne,"identique hors mots génériques, plusieurs entités (commune décisive)",CHE100001655 Ferring AG,OUI
 INNO:fireforce technology,Fireforce Technology Sàrl,1350,Orbe,CHE410174862,Fireforce Technology Sàrl,5938,haute,identique,,
 INNO:first industries,First Industries SA,1023,Crissier,CHE112433458,First Industries SA,5583,haute,identique,,
 INNO:flowkit numeca group,FlowKit-Numeca Group Sàrl,1010,Lausanne,,,,aucune,,,
@@ -99,7 +99,7 @@ INNO:green chemical engineering,Green Chemical Engineering SA,1270,Trélex,CHE24
 INNO:grt operations,GRT Operations SA,1350,Orbe,,,,aucune,,,
 INNO:hets eesp ecole d etudes sociales et pedagogi,HETS & Sa EESP École d'études sociales et pédagogi,1010,Lausanne,,,,aucune,,,
 INNO:honeywell technologies,Honeywell Technologies Sàrl,1180,Rolle,,,,aucune,,,
-INNO:hr bench institute,HR Bench Institute Sàrl,1814,La Tour-de-Peilz,CHE401918026,HR Bench Institute Sàrl,6643,basse,"identique, siège hors du canton",,
+INNO:hr bench institute,HR Bench Institute Sàrl,1814,La Tour-de-Peilz,CHE401918026,HR Bench Institute Sàrl,6643,basse,"identique, siège hors du canton",,OUI
 INNO:igemetris technologies,IGemetris Technologies SA,1071,Chexbres,,,,aucune,,,
 INNO:importexa,Importexa S.A.,1093,La Conversion,CHE107944115,Importexa S.A.,5606,haute,identique,,
 INNO:inexto,INEXTO SA,1006,Lausanne,CHE130083646,Inexto SA,5586,haute,identique,,
@@ -119,26 +119,26 @@ INNO:la pierre blanche residences,La Pierre Blanche résidences SA,1470,Estavaye
 INNO:lakediamond,LakeDiamond SA,1400,Yverdon-les-Bains,,,,aucune,,,
 INNO:lamina technologies,Lamina Technologies SA,1400,Yverdon-les-Bains,CHE109382814,Lamina Technologies SA en liquidation,5938,haute,identique,,
 INNO:ld switzerland,LD SWITZERLAND SA,1055,Yverdon,CHE222058084,LD SWITZERLAND SA,5822,haute,identique,,
-INNO:lemo,Lémo S.A.,1024,Ecublens,CHE108076987,LEMO SA,5635,basse,"identique, plusieurs entités",CHE102322159 Lémo (5) S.A.,
+INNO:lemo,Lémo S.A.,1024,Ecublens,CHE108076987,LEMO SA,5635,basse,"identique, plusieurs entités",CHE102322159 Lémo (5) S.A.,OUI
 INNO:les cepages,Les Cépages SA,1315,La Sarraz,CHE114297887,Les Cépages SA,5498,haute,identique,,
 INNO:levatura,Levatura SA,1434,Ependes,,,,aucune,,,
-INNO:logitech europe,Logitech Europe SA,1015,Lausanne,CHE107480920,Logitech (Europe) SA,5635,haute,identique,,
+INNO:logitech europe,Logitech Europe SA,1015,Lausanne,CHE107480920,Logitech Europe S.A.,5635,haute,identique,,
 INNO:lumx asset management suisse,Lumx Asset Management Suisse SA,1260,Nyon,,,,aucune,,,
 INNO:masoda,Masoda Sàrl,1522,Lucens,,,,aucune,,,
 INNO:medxcell,MedXCell SA,1820,Montreux,CHE498867728,MedXCell SA,5886,haute,identique,,
 INNO:met flow,Met-Flow SA,1007,Lausanne,CHE106691911,Met-Flow SA,5586,haute,identique,,
 INNO:micropat,micropat SA,1020,Renens,CHE114323007,micropat SA,5591,haute,identique,,
 INNO:microsens,Microsens S.A.,2002,Lausanne,CHE106468365,MICROSENS SA,5635,haute,identique,,
-INNO:mirrakoi,Mirrakoi SA,1015,Lausanne,CHE361911808,MIRRAKOI SA,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,
+INNO:mirrakoi,Mirrakoi SA,1015,Lausanne,CHE361911808,MIRRAKOI SA,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,OUI
 INNO:mosini et caviezel,Mosini et Caviezel SA,1110,Morges,CHE109798818,Mosini et Caviezel SA,5492,haute,identique,,
 INNO:movement,Movement SA,1070,Puidoux,CHE106062827,Movement SA,5890,haute,identique,,
 INNO:my vitality,my-vitality sàrl,1297,Founex,,,,aucune,,,
-INNO:mymetics,Mymetics SA,1066,Epalinges,CHE113618351,MYMETICS SA,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,
+INNO:mymetics,Mymetics SA,1066,Epalinges,CHE113618351,MYMETICS SA,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,OUI
 INNO:nano bridging molecules,Nano Bridging Molecules SA,1196,Gland,CHE109697206,Nano Bridging Molecules SA,5721,haute,identique,,
-INNO:netguardians,NetGuardians SA,1400,Yverdon-les-Bains,CHE296632260,NetGuardians Holding SA,5938,moyenne,identique hors mots génériques,,
+INNO:netguardians,NetGuardians SA,1400,Yverdon-les-Bains,CHE296632260,NetGuardians Holding SA,5938,moyenne,identique hors mots génériques,,OUI
 INNO:new generation tanks,New Generation Tanks SA,1052,Le Mont-Sur-Lausanne,CHE189773676,New Generation Tanks SA,5587,haute,identique,,
 INNO:nidecker,Nidecker SA,1180,Rolle,CHE112452875,Nidecker SA,5861,haute,identique,,
-INNO:nous,Nous Sàrl,1473,Châtillon,CHE286576482,Nous (EM) Sàrl,5512,basse,"identique, plusieurs entités",CHE356833870 Nous Sàrl,
+INNO:nous,Nous Sàrl,1473,Châtillon,CHE356833870,Nous (EM) Sàrl,5512,basse,"identique, plusieurs entités",CHE356833870 Nous Sàrl,OUI
 INNO:novigenix,Novigenix SA,1066,Epalinges,CHE496504999,Novigenix SA,5584,haute,identique,,
 INNO:objectis,Objectis SA,1400,Yverdon-les-Bains,CHE227202081,Objectis SA,5938,haute,identique,,
 INNO:onward medical,ONWARD Medical SA,1015,Lausanne,CHE251627802,ONWARD MEDICAL SA,5586,haute,identique,,
@@ -151,7 +151,7 @@ INNO:pepit consulting,PEPIT Consulting Sàrl,1299,Crans-près-Céligny,CHE197230
 INNO:phenosystems,PhenoSystems SA,1807,Blonay,CHE114794281,PhenoSystems SA,5892,haute,identique,,
 INNO:ponzio solar facilities,Ponzio Solar Facilities SA,1410,Thierrens,,,,aucune,,,
 INNO:power vision engineering,Power Vision Engineering SaRL,1024,Ecublens,CHE113828983,POWER VISION ENGINEERING SARL,5648,haute,identique,,
-INNO:precilabs,PreciLabs SA,1425,Onnens,CHE484922918,PRECILABS SA,5565,haute,identique,,
+INNO:precilabs,PreciLabs SA,1425,Onnens,CHE484922918,PreciLabs SA,5565,haute,identique,,
 INNO:pristem,Pristem SA,1007,Lausanne,CHE343381686,Pristem SA,5586,haute,identique,,
 INNO:privatedeal,PrivateDeal SA,1000,Lausanne 25,,,,aucune,,,
 INNO:privately,Privately SA,1015,Lausanne,CHE286854770,Privately SA,5635,haute,identique,,
@@ -161,13 +161,13 @@ INNO:pryv,Pryv SA,1015,Lausanne,,,,aucune,,,
 INNO:pure natural food,Pure Natural Food SA,1023,Crissier,,,,aucune,,,
 INNO:qoqa services,QoQa Services SA,1030,Bussigny,CHE112640276,QoQa Services SA,5624,haute,identique,,
 INNO:quadrane,Quadrane Sàrl,1299,Crans-près-Céligny,CHE271351023,"Quadrane Sàrl, en liquidation",5586,haute,identique,,
-INNO:quantum integrity,Quantum Integrity SA,1015,Lausanne,CHE393760330,QUANTUM INTEGRITY S.A.,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,
+INNO:quantum integrity,Quantum Integrity SA,1015,Lausanne,CHE393760330,QUANTUM INTEGRITY S.A.,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,OUI
 INNO:railtech,RailTech SA,1844,Villeneuve,CHE213912621,RailTech SA,5414,haute,identique,,
-INNO:regen lab,Regen Lab SA,1052,Le Mont sur Lausanne,CHE439246028,REGEN LAB SA,6153,basse,"identique, siège hors du canton",,
+INNO:regen lab,Regen Lab SA,1052,Le Mont sur Lausanne,CHE439246028,REGEN LAB SA,6153,basse,"identique, siège hors du canton",,OUI
 INNO:relec,Relec SA,1400,Yverdon-les-bains,CHE106034222,RELEC SA,5938,haute,identique,,
 INNO:rigi technologies,Rigi Technologies SA,1004,Lausanne,CHE423156595,Rigi Technologies SA,5589,haute,identique,,
 INNO:roumai medical,Roumai Medical (Switzerland) SA,1015,Lausanne,CHE170030768,Roumai Medical (Switzerland) SA,5635,haute,identique,,
-INNO:routerank,routeRank SA,1015,Lausanne,CHE113848425,ROUTERANK SA,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,
+INNO:routerank,routeRank SA,1015,Lausanne,CHE113848425,ROUTERANK SA,,moyenne,"identique (IDE publié par ARAMIS ou CORDIS, absent du registre actif)",,OUI
 INNO:rueger,Rüeger SA,1023,Crissier,CHE101622222,Rüeger S.A.,5583,haute,identique,,
 INNO:samawatt,SAMAWATT AG,1262,Eysins,CHE260789705,SAMAWATT SA,5716,haute,identique,,
 INNO:sborg,SBorg SA,1003,Lausanne,CHE198086882,SBorg SA,5586,haute,identique,,
@@ -190,14 +190,14 @@ INNO:steen sustainable energy,STEEN Sustainable Energy SA,1003,Lausanne,CHE24778
 INNO:stehrenline,StehrenLine Sàrl,1445,Vuiteboeuf,CHE484993947,StehrenLine Sàrl,5766,haute,identique,,
 INNO:strom,Ström SA,1023,Crissier,CHE187060364,Ström SA,5624,haute,identique,,
 INNO:swissinnov product,Swissinnov Product sàrl,1196,Gland,CHE110127648,SwissInnov Product Sàrl,5721,haute,identique,,
-INNO:swissto12,SWISSto12 SA,1015,Lausanne,CHE370774769,SWISSto12 SA,5591,haute,identique,,
+INNO:swissto12,SWISSto12 SA,1015,Lausanne,CHE370774769,SWISSTO12 SA,5591,haute,identique,,
 INNO:sysmosoft,Sysmosoft SA,1401,Yverdon,,,,aucune,,,
 INNO:talislife,Talislife Sàrl,1260,Nyon,CHE463416147,Talislife Sàrl,5724,haute,identique,,
-INNO:talk,Talk Sàrl,1350,Orbe,CHE387264761,Talk Sàrl,5757,moyenne,"identique, plusieurs entités (commune décisive)",CHE432196004 TALK (Tourismus Adelboden-Lenk-Kandersteg) AG,
+INNO:talk,Talk Sàrl,1350,Orbe,CHE387264761,Talk Sàrl,5757,moyenne,"identique, plusieurs entités (commune décisive)",CHE432196004 TALK (Tourismus Adelboden-Lenk-Kandersteg) AG,OUI
 INNO:technis,Technis SA,1004,Lausanne,CHE140953786,Technis SA,5586,haute,identique,,
 INNO:tecphy,TECPHY Sàrl,1020,Renens,CHE286111054,TECPHY Sàrl,5591,haute,identique,,
 INNO:tellement facile,Tellement Facile SA,1266,Duillier,CHE321876471,Tellement Facile SA,5715,haute,identique,,
-INNO:the positive project,The Positive Project Sàrl,1012,Lausanne,CHE297129319,The Positive Project Sàrl,6614,basse,"identique, siège hors du canton",,
+INNO:the positive project,The Positive Project Sàrl,1012,Lausanne,CHE297129319,The Positive Project Sàrl,6614,basse,"identique, siège hors du canton",,OUI
 INNO:topomat technologies,Topomat Technologies SA,1297,Founex,CHE101922374,Topomat Technologies SA,5717,haute,identique,,
 INNO:tyre recycling solutions,Tyre Recycling Solutions SA,1196,Gland,CHE145547554,Tyre Recycling Solutions SA en liquidation,5643,haute,identique,,
 INNO:unipix,UniPix Sàrl,1028,Préverenges,CHE155669087,UniPix Sàrl,5643,haute,identique,,
@@ -208,4 +208,4 @@ INNO:viventis microscopy,Viventis Microscopy Sàrl,1015,Lausanne,CHE313940842,Vi
 INNO:voce solutions,Voce Solutions Sàrl,1093,Lutry,CHE406235578,Voce Solutions Sàrl,5606,haute,identique,,
 INNO:voltiris,Voltiris SA,1010,Lausanne,CHE318703048,Voltiris SA,5584,haute,identique,,
 INNO:wire art switzerland,Wire Art Switzerland SA,1450,Sainte-Croix,CHE446278714,Wire Art Switzerland SA,5568,haute,identique,,
-INNO:xanastim,XanaStim Sàrl,1066,Epalinges,CHE499107784,XanaStim Sàrl,6709,basse,"identique, siège hors du canton",,
+INNO:xanastim,XanaStim Sàrl,1066,Epalinges,CHE499107784,XanaStim Sàrl,6709,basse,"identique, siège hors du canton",,OUI
