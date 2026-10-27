@@ -1,0 +1,42 @@
+name: Extrait du registre du commerce (IDE)
+
+# Extrait Zefix (LINDAS) pour attribuer un numéro IDE aux organisations qui n'en ont pas.
+# Lancement à distance : modifier data/state/registre/declencheur.txt ou recherche_motifs.txt.
+on:
+  push:
+    paths: ["data/state/registre/declencheur.txt", "data/state/registre/recherche_motifs.txt"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: registre
+  cancel-in-progress: false
+
+jobs:
+  extrait:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install requests
+
+      - name: Extrait du registre
+        run: python scripts/registre_extrait.py 2>&1 | tee data/state/registre/journal.txt
+
+      - name: Enregistrer
+        run: |
+          git config user.name "atlas-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/state/registre
+          if git diff --cached --quiet; then echo "Aucun changement"; exit 0; fi
+          git commit -m "Extrait du registre du commerce ($(date -u +%Y-%m-%d))"
+          for i in 1 2 3 4 5; do git pull --rebase -q && git push && break; sleep 10; done
